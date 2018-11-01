@@ -1,0 +1,29 @@
+{
+  "name": "puko/console",
+  "description": "A advanced console util that make pukoframework get things done on the fly",
+  "type": "library",
+  "version": "0.1.0",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "velliz",
+      "email": "diditvelliz@outlook.com",
+      "homepage": "http://velliz.github.io",
+      "role": "Lead Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/Velliz/pukoconsole"
+    }
+  ],
+  "require": {
+    "nikic/php-parser": "4.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "pukoconsole\\": "src/"
+    }
+  }
+}
