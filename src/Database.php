@@ -1,18 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: didit
- * Date: 11/2/2018
- * Time: 12:25 AM
- */
 
 namespace pukoconsole;
 
-use Exception;
 use PDO;
+use pukoconsole\util\Echos;
+use pukoconsole\util\Input;
 
 class Database
 {
+
+    use Input, Echos;
 
     var $args = array();
 
@@ -22,26 +19,25 @@ class Database
 
     /**
      * Database constructor.
-     * @param $args
      * @throws \Exception
      */
-    public function __construct($args)
+    public function __construct()
     {
-        $this->args = $args;
-
-        switch ($this->args['type']) {
+        $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+        switch ($db) {
             case 'mysql':
                 $this->PDO = $this->GenerateMySQL();
                 break;
             default:
-                throw new Exception(sprintf('sorry, database %s not yet supported', $this->args['type']));
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
         }
 
         $statement = $this->PDO->prepare($this->query);
         $statement->execute();
+
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $val) {
-            echo sprintf("Creating model %s.php", $val['TABLE_NAME']);
-            echo "\n";
+
+            echo Echos::Prints(sprintf("Creating model %s.php", $val['TABLE_NAME']));
 
             $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
             $statement->execute();
@@ -88,12 +84,12 @@ class Database
 
     public function GenerateMySQL()
     {
-        $host = $this->args['host'];
-        $port = $this->args['port'];
-        $dbName = $this->args['dbName'];
+        $host = Input::Read('Hostname (Default: localhost)');
+        $port = Input::Read('Port (Default: 3306)');
+        $dbName = Input::Read('Database Name');
 
-        $user = $this->args['user'];
-        $pass = $this->args['pass'];
+        $user = Input::Read('Username');
+        $pass = Input::Read('Password');
 
         $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
         $dbi = new PDO($pdoConnection, $user, $pass);

@@ -3,6 +3,7 @@
 namespace pukoconsole;
 
 use Exception;
+use pukoconsole\util\Echos;
 
 /**
  * Class Console
@@ -11,9 +12,17 @@ use Exception;
 class Console
 {
 
+    use Echos;
+
     var $args = array();
 
     var $root = '';
+
+    const COMMAND = 1;
+    const DIRECTIVE = 2;
+    const ACTION = 3;
+    const ATTRIBUTE = 4;
+    const EPHEMERAL = 5;
 
     public function __construct($root, $args)
     {
@@ -22,14 +31,13 @@ class Console
     }
 
     /**
-     * @param $command
      * @throws Exception
      */
-    public function Execute($command)
+    public function Execute()
     {
-        switch ($command) {
+        switch ($this->GetCommand(Console::COMMAND)) {
             case 'setup':
-                echo $this->Setup($this->args['kind']);
+                echo $this->Setup($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'routes':
                 break;
@@ -44,9 +52,10 @@ class Console
                 echo $this;
                 break;
             default:
-                throw new Exception('command not supported');
+                echo $this->Help();
                 break;
         }
+        return null;
     }
 
     /**
@@ -58,7 +67,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database($this->args);
+                return new Database();
                 break;
             case 'secure':
                 break;
@@ -68,7 +77,7 @@ class Console
                 break;
         }
 
-        return 'Setup executed succesfuly!';
+        return Echos::Prints("Setup executed!");
     }
 
     public function Help()
@@ -95,9 +104,21 @@ class Console
         return '';
     }
 
+    /**
+     * @param int $type
+     * @return mixed|null
+     */
+    public function GetCommand($type = Console::COMMAND)
+    {
+        return isset($this->args[$type]) ? $this->args[$type] : null;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return 'Puko Console v0.1.0';
+        return Echos::Prints("Puko Console v1.0.1");
     }
 
 }
