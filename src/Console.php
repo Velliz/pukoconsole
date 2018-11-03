@@ -45,6 +45,9 @@ class Console
                 break;
             case 'docs':
                 break;
+            case 'serve':
+                new Serve();
+                break;
             case 'help':
                 echo $this->Help();
                 break;
