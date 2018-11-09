@@ -2,7 +2,7 @@
 
 > Work in progress
 
-A advanced console util that make *pukoframework* get things done on the fly.
+Advanced console util that make *pukoframework* get things done on the fly.
 
 Usage:
 
