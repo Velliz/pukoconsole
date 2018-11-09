@@ -40,6 +40,11 @@ class Console
                 echo $this->Setup($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'routes':
+                echo new Routes(array(
+                    'directive' => Console::DIRECTIVE, /* view/service/list */
+                    'action' => Console::ACTION, /* add/update/remove */
+                    'attribute' => Console::ATTRIBUTE, /* user/{?}/data */
+                ), $this->root);
                 break;
             case 'element':
                 break;
@@ -70,7 +75,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database();
+                return new Database($this->root);
                 break;
             case 'secure':
                 break;

@@ -1,0 +1,4 @@
+    /**
+     * #Column {{field}} {{type}}
+     */
+    var ${{field}} = {{value}};

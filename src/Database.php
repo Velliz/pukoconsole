@@ -2,6 +2,7 @@
 
 namespace pukoconsole;
 
+use Exception;
 use PDO;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
@@ -19,10 +20,15 @@ class Database
 
     /**
      * Database constructor.
-     * @throws \Exception
+     * @param null $dir
+     * @throws Exception
      */
-    public function __construct()
+    public function __construct($dir = null)
     {
+        if ($dir === null) {
+            die(Echos::Prints('Base url required'));
+        }
+
         $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
         switch ($db) {
             case 'mysql':
@@ -47,38 +53,33 @@ class Database
             $primary = "";
 
             foreach ($column as $k => $v) {
-                if ($v['Key'] === 'PRI') {
-                    $primary = $v['Field'];
-                }
                 $initValue = 'null';
-                if (strpos($v['Type'], 'char') !== false) {
-                    $initValue = "''";
-                }
-                if (strpos($v['Type'], 'text') !== false) {
-                    $initValue = "''";
-                }
-                if (strpos($v['Type'], 'int') !== false) {
-                    $initValue = 0;
-                }
-                if (strpos($v['Type'], 'double') !== false) {
-                    $initValue = 0;
-                }
-                $property .= "
-    /**
-     * #Column " . $v['Field'] . " " . $v['Type'] . "
-     */
-    var $" . $v['Field'] . " = " . $initValue . ";
-";
 
+                if ($v['Key'] === 'PRI') $primary = $v['Field'];
+
+                if (in_array(array('char', 'text'), $v['Type'])) {
+                    $initValue = "''";
+                }
+                if (in_array(array('int', 'double', 'tinyint'), $v['Type'])) {
+                    $initValue = 0;
+                }
+
+                $property .= file_get_contents($dir . "vendor/puko/console/src/assets/model_vars");
+                $property = str_replace('{{field}}', $v['Field'], $property);
+                $property = str_replace('{{type}}', $v['Type'], $property);
+                $property = str_replace('{{value}}', $initValue, $property);
             }
-            $model_file = file_get_contents("template/model/model");
+
+            $model_file = file_get_contents($dir . "vendor/puko/console/src/assets/model");
             $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
-            if (!is_dir('plugins/model')) {
-                mkdir('plugins/model');
+
+            if (!is_dir($dir . 'plugins/model')) {
+                mkdir($dir . 'plugins/model');
             }
-            file_put_contents("plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
+            file_put_contents($dir . "plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
+
         }
     }
 
