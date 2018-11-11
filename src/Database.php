@@ -114,14 +114,19 @@ class Database
         $user = Input::Read('Username');
         $pass = Input::Read('Password');
 
-        $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
-        $dbi = new PDO($pdoConnection, $user, $pass);
-        $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
+            $dbi = new PDO($pdoConnection, $user, $pass);
+            $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
+            $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
 
-        return $dbi;
+            return $dbi;
+        } catch (Exception $ex) {
+            die(Echos::Prints("Failed to connect."));
+        }
+
     }
 
     public function GenerateOracle()

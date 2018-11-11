@@ -27,8 +27,8 @@ class Controller
         $template = null;
 
         if ($value === null) {
-            die(Echos::Prints("class_name not specified." .
-                "example: php puko setup base_auth UserController"
+            die(Echos::Prints("name not specified. " .
+                "example: php puko setup auth UserController"
             ));
         }
 
@@ -36,16 +36,16 @@ class Controller
             $template = file_get_contents(__DIR__ . "/template/controller/view");
         }
         if ($action === 'service') {
-            $template = file_get_contents(__DIR__ . "template/controller/service");
+            $template = file_get_contents(__DIR__ . "/template/controller/service");
         }
 
         $template = str_replace('{{class}}', $value, $template);
-        if (!is_dir($root . 'plugins/controller')) {
-            mkdir($root . 'plugins/controller');
+        if (!is_dir($root . '/plugins/controller')) {
+            mkdir($root . '/plugins/controller');
         }
-        file_put_contents($root . "plugins/controller/{$value}.php", $template);
+        file_put_contents($root . "/plugins/controller/{$value}.php", $template);
 
-        return Echos::Prints("base_controller {$value} created!");
+        return Echos::Prints("{$action} controller {$value} created!");
     }
 
 }

@@ -6,8 +6,8 @@ Commands list:
 setup    Setup puko framework installation
          [db]
          [secure]
-         [base_auth] [class_name]
-         [base_controller] [class_name] [view/service]
+         [auth] [name]
+         [controller] [view/service] [name]
 routes   Setup puko framework routes
          [view/service/error/not_found] [add/update/delete/list] [url]
 serve    Start puko on localhost:[port]

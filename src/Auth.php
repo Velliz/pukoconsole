@@ -46,6 +46,6 @@ class Auth
 
     public function __toString()
     {
-        return Echos::Prints("auth {$this->value} created!");
+        return Echos::Prints("Auth template with name {$this->value} created!");
     }
 }
