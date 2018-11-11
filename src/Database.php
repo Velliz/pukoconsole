@@ -1,4 +1,13 @@
 <?php
+/**
+ * pukoconsole.
+ * Advanced console util that make pukoframework get things done on the fly.
+ * Copyright (c) 2018, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoconsole
+ * @since Version 0.1.0
+ */
 
 namespace pukoconsole;
 
@@ -12,20 +21,24 @@ class Database
 
     use Input, Echos;
 
-    var $args = array();
+    /**
+     * @var PDO
+     */
+    var $PDO;
 
-    var $PDO = null;
-
+    /**
+     * @var string
+     */
     var $query = '';
 
     /**
      * Database constructor.
-     * @param null $dir
+     * @param null $root_dir
      * @throws Exception
      */
-    public function __construct($dir = null)
+    public function __construct($root_dir = null)
     {
-        if ($dir === null) {
+        if ($root_dir === null) {
             die(Echos::Prints('Base url required'));
         }
 
@@ -33,6 +46,15 @@ class Database
         switch ($db) {
             case 'mysql':
                 $this->PDO = $this->GenerateMySQL();
+                break;
+            case 'oracle':
+                $this->GenerateOracle();
+                break;
+            case 'sqlsrv':
+                $this->GenerateSqlServer();
+                break;
+            case 'mongo':
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
                 break;
             default:
                 die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
@@ -64,21 +86,21 @@ class Database
                     $initValue = 0;
                 }
 
-                $property .= file_get_contents($dir . "vendor/puko/console/src/assets/model_vars");
+                $property .= file_get_contents(__DIR__ . "/template/assets/model_vars");
                 $property = str_replace('{{field}}', $v['Field'], $property);
                 $property = str_replace('{{type}}', $v['Type'], $property);
                 $property = str_replace('{{value}}', $initValue, $property);
             }
 
-            $model_file = file_get_contents($dir . "vendor/puko/console/src/assets/model");
+            $model_file = file_get_contents(__DIR__ . "/template/assets/model");
             $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
 
-            if (!is_dir($dir . 'plugins/model')) {
-                mkdir($dir . 'plugins/model');
+            if (!is_dir($root_dir . 'plugins/model')) {
+                mkdir($root_dir . 'plugins/model');
             }
-            file_put_contents($dir . "plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
+            file_put_contents($root_dir . "plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
 
         }
     }
@@ -96,32 +118,30 @@ class Database
         $dbi = new PDO($pdoConnection, $user, $pass);
         $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->query = "SELECT TABLE_NAME 
-        FROM INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_NAME like '%' 
-        AND TABLE_SCHEMA = '$dbName'";
+        $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = {$dbName}";
 
         return $dbi;
     }
 
     public function GenerateOracle()
     {
-        //todo: generate oracle database connection
+        die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
     public function GenerateSqlServer()
     {
-        //todo: generate oracle database connection
+        die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
     public function GenerateMongo()
     {
-        //todo: generate oracle database connection
+        die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
     public function __toString()
     {
-        return 'Database setting completed';
+        return Echos::Prints('Database setting completed');
     }
 
 }

@@ -1,8 +1,6 @@
-{!css(<!-- your custom CSS file here -->)}
-<table>
-<tr>
-<td>controller</td>
-<td>$controller.php</td>
-</tr>
-</table>
-{!js(<!-- your custom JavaScript file here -->)}
+{!css(<!-- place your custom CSS file here -->)}
+
+<p>Blank pages is proof that your routes looks right.</p>
+<p>So... Happy designing :)</p>
+
+{!js(<!-- place your custom JavaScript file here -->)}

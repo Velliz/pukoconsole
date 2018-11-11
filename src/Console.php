@@ -1,4 +1,13 @@
 <?php
+/**
+ * pukoconsole.
+ * Advanced console util that make pukoframework get things done on the fly.
+ * Copyright (c) 2018, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoconsole
+ * @since Version 0.1.0
+ */
 
 namespace pukoconsole;
 
@@ -14,9 +23,20 @@ class Console
 
     use Echos;
 
+    /**
+     * @var array
+     */
+    var $config = array();
+
+    /**
+     * @var array
+     */
     var $args = array();
 
-    var $root = '';
+    /**
+     * @var string
+     */
+    var $root = __DIR__;
 
     const COMMAND = 1;
     const DIRECTIVE = 2;
@@ -24,10 +44,19 @@ class Console
     const ATTRIBUTE = 4;
     const EPHEMERAL = 5;
 
+    /**
+     * Console constructor.
+     * @param $root
+     * @param $args
+     */
     public function __construct($root, $args)
     {
         $this->root = $root;
         $this->args = $args;
+        if (!file_exists( __DIR__ . "/config/init.php")) {
+            die(Echos::Prints('Console init file not found'));
+        }
+        $this->config = (include __DIR__ . "/config/init.php");
     }
 
     /**
@@ -37,33 +66,37 @@ class Console
     {
         switch ($this->GetCommand(Console::COMMAND)) {
             case 'setup':
-                echo $this->Setup($this->GetCommand(Console::DIRECTIVE));
+                return $this->Setup($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'routes':
-                echo new Routes(array(
-                    'directive' => Console::DIRECTIVE, /* view/service/list */
-                    'action' => Console::ACTION, /* add/update/remove */
-                    'attribute' => Console::ATTRIBUTE, /* user/{?}/data */
+                return new Routes(array(
+                    /* view/service/list */
+                    'directive' => Console::DIRECTIVE,
+                    /* add/update/remove */
+                    'action' => Console::ACTION,
+                    /* user/{?}/data */
+                    'attribute' => Console::ATTRIBUTE,
                 ), $this->root);
                 break;
             case 'element':
+                return null;
                 break;
             case 'docs':
+                return null;
                 break;
             case 'serve':
-                new Serve();
+                return new Serve();
                 break;
             case 'help':
-                echo $this->Help();
+                return $this->Help();
                 break;
             case 'version':
-                echo $this;
+                return $this;
                 break;
             default:
-                echo $this->Help();
+                return $this->Help();
                 break;
         }
-        return null;
     }
 
     /**
@@ -78,38 +111,24 @@ class Console
                 return new Database($this->root);
                 break;
             case 'secure':
+                return null;
                 break;
             case 'auth':
+                return null;
                 break;
             case 'controller':
+                return null;
+                break;
+            default:
+                return Echos::Prints("Setup exited with no process executed!");
                 break;
         }
-
-        return Echos::Prints("Setup executed!");
     }
 
     public function Help()
     {
-        echo "\npukoframework console commands list:\n";
-        echo "  setup    Setup puko framework installation\n";
-        echo "           [db]\n";
-        echo "           [secure]\n";
-        echo "           [base_auth] [class_name]\n";
-        echo "           [base_controller] [class_name] [view/service]\n";
-        echo "\n";
-        echo "  routes   Setup puko framework routes\n";
-        echo "           [view/service/error/not_found] [add/update/delete/list] [url]\n";
-        echo "\n";
-        echo "  serve    Start puko on localhost:[port]\n";
-        echo "\n";
-        echo "  element  Puko elements\n";
-        echo "           [add/download]\n";
-        echo "\n";
-        echo "  help     Show help menu\n";
-        echo "\n";
-        echo "  version  Show console version\n";
-
-        return '';
+        $help = file_get_contents(__DIR__ . "/config/help.md");
+        return $help;
     }
 
     /**
@@ -126,7 +145,7 @@ class Console
      */
     public function __toString()
     {
-        return Echos::Prints("Puko Console v1.0.1");
+        return Echos::Prints("Puko Console {$this->config['version']}");
     }
 
 }
