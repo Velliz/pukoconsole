@@ -9,7 +9,7 @@ setup    Setup puko framework installation
          [auth] [name]
          [controller] [view/service] [name]
 routes   Setup puko framework routes
-         [view/service/error/not_found] [add/update/delete/list] [url]
+         [view/service/list/error/lost] [add/update/delete] [url]
 serve    Start puko on localhost:[port]
 element  Puko elements
          [add/download]

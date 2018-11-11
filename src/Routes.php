@@ -58,6 +58,8 @@ class Routes
 
         if (in_array($this->directive, array('view', 'service'))) {
             $this->structure($this->routes['page']);
+        } else if (in_array($this->directive, array('error', 'lost'))) {
+            $this->errorOrLost($this->directive);
         } else if ($this->directive === 'list') {
             $this->lists($this->routes['page']);
         } else {
@@ -159,7 +161,9 @@ class Routes
         $replacement = "    public function {$function}() {}\n\n}";
 
         if (!file_exists($path)) {
-            mkdir($dir, 0777, true);
+            if (strpos($namespace, '/') !== false) {
+                mkdir($dir, 0777, true);
+            }
             $ctrl = file_get_contents(__DIR__ . "/template/controller/{$kind}");
             $ctrl = str_replace("{{namespace}}", Routes::StringReplaceBackSlash($namespace), $ctrl);
             $ctrl = str_replace("{{class}}", $class, $ctrl);
@@ -189,6 +193,25 @@ class Routes
             $fname = "{$this->root}/assets/html/{$val}/{$controller}/{$function}.html";
             file_put_contents($fname, $html);
         }
+    }
+
+    public function errorOrLost($type)
+    {
+        $controller = Input::Read('Controller name (separate directory with \ key)');
+        $function = Input::Read('Function name');
+        $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
+
+        $data = [
+            "controller" => Routes::StringReplaceBackSlash($controller),
+            "function" => $function,
+            "accept" => explode(",", strtoupper($accept))
+        ];
+        $this->routes[$type] = $data;
+
+        file_put_contents(
+            $this->root . "/config/routes.php",
+            '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
+        );
     }
 
     public function __toString()
