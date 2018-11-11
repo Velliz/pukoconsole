@@ -22,6 +22,8 @@ class Serve
 
     use Echos;
 
+    var $port = 4000;
+
     /**
      * Serve constructor.
      * @param null $port
@@ -31,11 +33,17 @@ class Serve
         if ($port === null) {
             $port = 4000;
         }
+        $this->port = $port;
         echo Echos::Prints("Puko project initialized at localhost:{$port}");
         echo Echos::Prints("Press (Ctrl + C) to stop.");
         echo exec("php -S localhost:{$port} routes.php");
 
         return true;
+    }
+
+    public function __toString()
+    {
+        return Echos::Prints("PHP server starred on port {$this->port}.");
     }
 
 }

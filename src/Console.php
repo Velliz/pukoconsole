@@ -78,6 +78,7 @@ class Console
             case 'element':
                 return new Elements(
                     $this->root,
+                    $this->config,
                     $this->GetCommand(Console::DIRECTIVE),
                     $this->GetCommand(Console::ACTION)
                 );

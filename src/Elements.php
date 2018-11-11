@@ -23,7 +23,11 @@ class Elements
 
     use Commons, Echos;
 
-    public function __construct($root, $type, $command)
+    var $type = '';
+    var $command = '';
+    var $config = array();
+
+    public function __construct($root, $config, $type, $command)
     {
         if ($type === '' || $type === null) {
             die('element name must defined');
@@ -36,39 +40,16 @@ class Elements
             $html = sprintf("strtolower(%s::class . '.html')", $type);
             $path = sprintf("ROOT . '/' . str_replace('\\\\', '/', %s)", $html);
 
-            $varPhpFile = "<?php
+            $varPhpFile = file_get_contents(__DIR__ . "/template/plugins/elements");
 
-namespace plugins\\elements\\$lowerType;
-
-use pte\\Parts;
-
-class $type extends Parts
-{
-
-    /**
-     * @return string
-     */
-    public function Parse()
-    {" . '
-        $this->pte->SetValue($this->data);
-        $this->pte->SetHtml(' . $path . ");
-        return" . ' $this->pte->Output();' . "
-    }
-
-}";
-
-            if (!file_exists('plugins/elements/' . $lowerType)) {
-                mkdir('plugins/elements/' . $lowerType, 0777, true);
+            if (!file_exists(__DIR__ . '/plugins/elements/' . $lowerType)) {
+                mkdir(__DIR__ . '/plugins/elements/' . $lowerType, 0777, true);
             }
-            if (!file_exists('plugins/elements/' . $lowerType . '/' . $type . '.php')) {
-                file_put_contents('plugins/elements/' . $lowerType . '/' . $type . '.php', $varPhpFile);
+            if (!file_exists(__DIR__ . '/plugins/elements/' . $lowerType . '/' . $type . '.php')) {
+                file_put_contents(__DIR__ . '/plugins/elements/' . $lowerType . '/' . $type . '.php', $varPhpFile);
             }
 
-            $newHtmlFile = <<<HTML
-{!css(<link href="plugins/elements/?/?.css" rel="stylesheet" type="text/css"/>)}
-{!js(<script type="text/javascript" src="plugins/elements/?/?.js"></script>)}
-<!-- your code here -->
-HTML;
+            $newHtmlFile = file_get_contents(__DIR__ . "/template/plugins/html");
 
             $newHtmlFile = str_replace('?', $lowerType, $newHtmlFile);
 
@@ -76,59 +57,52 @@ HTML;
                 file_put_contents('plugins/elements/' . $lowerType . '/' . $lowerType . '.html', $newHtmlFile);
             }
 
-
-            $newJsFile = <<<JS
-// your code here
-JS;
+            $newJsFile = file_get_contents(__DIR__ . "/template/plugins/js");
 
             if (!file_exists('plugins/elements/' . $lowerType . '/' . $lowerType . '.js')) {
                 file_put_contents('plugins/elements/' . $lowerType . '/' . $lowerType . '.js', $newJsFile);
             }
 
-
-            $newCssFile = <<<CSS
-/* your css here */
-CSS;
+            $newCssFile = file_get_contents(__DIR__ . "/template/plugins/css");
 
             if (!file_exists('plugins/elements/' . $lowerType . '/' . $lowerType . '.css')) {
                 file_put_contents('plugins/elements/' . $lowerType . '/' . $lowerType . '.css', $newCssFile);
             }
-
-            echo "\n";
-            echo 'elements created';
-            echo "\n";
         }
 
-        if ($command === 'download') {
-            $url = 'https://api.github.com/repos/Velliz/elements/contents/' . $type;
-            $data = json_decode($this->download($url), true);
-
-            if (!file_exists('plugins/elements/' . $lowerType)) {
-                mkdir('plugins/elements/' . $lowerType, 0777, true);
-            }
-
-            foreach ($data as $single) {
-                if (!isset($single['download_url'])) {
-                    die('error when downloading elements');
-                }
-
-                $file = $this->download($single['download_url']);
-                if (!file_exists('plugins/elements/' . $single['path'])) {
-                    file_put_contents('plugins/elements/' . $single['path'], $file);
-                    echo 'downloading... ' . $single['name'];
-                    echo "\n";
-                }
-            }
-
-            echo "\n";
-            echo 'elements downloaded';
-            echo "\n";
+        if ($command === "download") {
+            $this->DownloadRepo($root);
         }
     }
 
-    public function DownloadRepo()
+    public function DownloadRepo($root)
     {
 
+        $url = "{$this->config['repo']}/{$this->type}";
+        $lowerType = strtolower($this->type);
+
+        $data = json_decode($this->download($url), true);
+
+        if (!file_exists("{$root}/plugins/elements/{$lowerType}")) {
+            mkdir("{$root}/plugins/elements/{$lowerType}", 0777, true);
+        }
+
+        foreach ($data as $single) {
+            if (!isset($single['download_url'])) {
+                die(Echos::Prints('Error when downloading elements.'));
+            }
+
+            $file = $this->download($single['download_url']);
+            if (!file_exists("{$root}/plugins/elements/{$single['path']}")) {
+                file_put_contents("{$root}/plugins/elements/{$single['path']}", $file);
+                echo Echos::Prints("Downloading... {$single['name']}", false);
+            }
+        }
+    }
+
+    public function __toString()
+    {
+        return Echos::Prints("Element {$this->command} created.");
     }
 
 }

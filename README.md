@@ -15,13 +15,13 @@ Finished:
 * Controller
 * Database
 * Serve
+* Routes
+* Secure
 
 Todo:
 * Element
-* Routes
-* Secure
 * Docs
-* Seeds
+* ~~Seeds~~ [deprecated]
 
 Crafted with <3 from Bandung, Indonesia.
 
