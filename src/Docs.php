@@ -22,7 +22,7 @@ class Docs
 
     use Echos;
 
-    public function __construct()
+    public function __construct($root, $command, $value)
     {
         //todo: automated creating docs
     }

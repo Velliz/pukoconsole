@@ -1,8 +1,16 @@
 <?php
+/**
+ * pukoconsole.
+ * Advanced console util that make pukoframework get things done on the fly.
+ * Copyright (c) 2018, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoconsole
+ * @since Version 0.1.0
+ */
 
 namespace pukoconsole;
 
-use Exception;
 use pukoconsole\util\Commons;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
@@ -19,40 +27,49 @@ class Routes
     var $directive = null;
     var $action = null;
     var $attribute = null;
-    var $dir = null;
+    var $root = null;
+
+    var $lang = array('en', 'id');
 
     /**
-     * Routes constructor.
-     * @param array $param
-     * @param null $dir
-     * @throws Exception
+     * @var array|mixed
      */
-    public function __construct($param = array(), $dir = null)
+    var $routes = array();
+
+    /**
+     * Routes constructor
+     * @param $root
+     * @param $directive
+     * @param $action
+     * @param $attribute
+     */
+    public function __construct($root, $directive, $action, $attribute)
     {
-        if ($dir === null) {
+        if ($root === null) {
             die(Echos::Prints('Base url required'));
         }
-        $routes = include $dir . "/config/routes.php";
+        $this->root = $root;
 
-        $this->directive = $param['directive'];
-        $this->action = $param['action'];
-        $this->attribute = $param['attribute'];
-        $this->dir = $dir;
+        $this->directive = $directive;
+        $this->action = $action;
+        $this->attribute = $attribute;
+
+        $this->routes = include "{$root}/config/routes.php";
 
         if (in_array(array('view', 'service'), $this->directive)) {
-            $this->structure($routes['page']);
+            $this->structure($this->routes['page']);
         } else if ($this->directive === 'list') {
-            $this->lists($routes['page']);
+            $this->lists($this->routes['page']);
         } else {
-            $this->structure($routes[$this->directive]);
+            $this->structure($this->routes[$this->directive]);
         }
     }
 
-    public function structure($active)
+    public function structure($pages)
     {
         switch ($this->action) {
             case 'add':
-                $this->add($active);
+                $this->add($pages);
                 break;
             case 'update':
                 $this->update();
@@ -66,9 +83,9 @@ class Routes
         }
     }
 
-    public function add($active)
+    public function add($segment)
     {
-        if (isset($active[$this->attribute])) {
+        if (isset($segment[$this->attribute])) {
             die(Echos::Prints("Routes already registered!"));
         }
 
@@ -84,12 +101,12 @@ class Routes
         $routes['page'][$this->attribute] = $data;
 
         file_put_contents(
-            $this->dir . "config/routes.php",
+            $this->root . "config/routes.php",
             '<?php $routes = ' . $this->var_export54($routes) . '; return $routes;'
         );
 
         if ($this->directive === 'view') {
-            $this->process_assets();
+            $this->ProcessAssets($controller, $function);
         }
 
         $controllerExplode = explode('\\', $controller);
@@ -101,109 +118,85 @@ class Routes
         }
 
         if (sizeof($controllerExplode) == 1) {
-            //region base
             $namespaces = "controller";
-            $cNamespaces = $apps . $namespaces;
-            $className = $controller;
-            $varNewFile = <<<PHP
-<?php
-
-namespace $cNamespaces;
-
-use pukoframework\middleware\View;
-
-/**
- * #Master master.html
- */
-class $className extends View
-{
-
-    public function $function(){}
-
-}
-
-PHP;
-            if (!file_exists($namespaces . "/" . $className . ".php")) {
-                file_put_contents($namespaces . "/" . $className . '.php', $varNewFile);
-            } else {
-                $existingController = file_get_contents($namespaces . "/" . $className . '.php');
-                $pos = strrpos($existingController, "}");
-                $existingController = substr_replace($existingController, "    public function $function(){}\n\n}", $pos);
-                file_put_contents($namespaces . "/" . $className . '.php', $existingController);
-            }
+            $cNamespaces = $namespaces;
         } else {
             //region complex namespaces
             $namespaces = "controller\\" . rtrim($namespaces, "\\");
-            $cNamespaces = $apps . $namespaces;
-            $namespaceFolder = str_replace("\\", "/", $namespaces);
-            $varNewFile = <<<PHP
-<?php
-
-namespace $cNamespaces;
-
-use pukoframework\middleware\View;
-
-/**
- * #Master master.html
- */
-class $className extends View
-{
-
-    public function $function(){}
-
-}
-
-PHP;
-            if (!file_exists($namespaceFolder)) {
-                mkdir($namespaceFolder, 0777, true);
-            }
-            if (!file_exists('controller/' . str_replace('\\', '/', $controller . '.php'))) {
-                file_put_contents('controller/' . str_replace('\\', '/', $controller . '.php'), $varNewFile);
-            } else {
-                $existingController = file_get_contents('controller/' . str_replace('\\', '/', $controller . '.php'));
-                $pos = strrpos($existingController, "}");
-                $existingController = substr_replace($existingController, "    public function $function(){}\n\n}", $pos);
-                file_put_contents('controller/' . str_replace('\\', '/', $controller . '.php'), $existingController);
-            }
-
+            $cNamespaces = Routes::StringReplaceSlash($namespaces);
         }
-        echo "\nroutes added\n";
+
+        $this->ProcessController($cNamespaces, $className, $function, $this->directive);
+
+        return Echos::Prints("Routes {$cNamespaces} {$function} added.");
     }
 
     public function update()
     {
-
+        die(Echos::Prints('To risky. Please delete them manually.'));
     }
 
     public function lists($routes = array())
     {
+        $count = count($routes);
+        echo Echos::Prints("Routes list found ({$count}) entries.");
+        foreach ($routes as $key => $value) {
+            $accept = implode(",", $value["accept"]);
+            echo "{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]";
+            echo "\n";
+        }
     }
 
     public function remove()
     {
+        die(Echos::Prints('To risky. Please delete them manually.'));
     }
 
-    public function process_assets()
+    public function ProcessController($namespace, $class, $function, $kind)
     {
+        $path = "{$this->root}/controller/{$namespace}/{$class}.php";
+        $replacement = "    public function {$function}() {}\n\n}";
 
-        if (!file_exists($this->dir . "assets/html/id/" . str_replace('\\', '/', $controller))) {
-            mkdir($this->dir . "assets/html/id/" . str_replace('\\', '/', $controller), 0777, true);
+        if (!file_exists($path)) {
+            $ctrl = file_get_contents(__DIR__ . "/controller/{$kind}");
+            $ctrl = str_replace("{{namespace}}", $namespace, $ctrl);
+            $ctrl = str_replace("{{class}}", $class, $ctrl);
+        } else {
+            $ctrl = file_get_contents($path);
         }
 
-        if (!file_exists($this->dir . "assets/html/en/" . str_replace('\\', '/', $controller))) {
-            mkdir($this->dir . "assets/html/en/" . str_replace('\\', '/', $controller), 0777, true);
+        $last_colon = strrpos($ctrl, "}");
+        $ctrl = substr_replace($ctrl, $replacement, $last_colon);
+
+        file_put_contents($path, $ctrl);
+    }
+
+    /**
+     * @param $controller
+     * @param $function
+     */
+    public function ProcessAssets($controller, $function)
+    {
+        $controller = Routes::StringReplaceSlash($controller);
+        foreach ($this->lang as $key => $val) {
+            $ctrl = "{$this->root}assets/html/{$val}/{$controller}";
+            if (!file_exists($ctrl)) {
+                mkdir($ctrl, 0777, true);
+            }
+            $html = file_get_contents(__DIR__ . "/template/assets/html");
+            $fname = "{$this->root}/assets/html/{$val}/{$controller}/{$function}.html";
+            file_put_contents($fname, $html);
         }
-
-        $html = file_get_contents($this->dir);
-
-        file_put_contents("assets/html/id/" . str_replace('\\', '/', $controller) . '/' . $function . '.html', $html);
-        file_put_contents("assets/html/en/" . str_replace('\\', '/', $controller) . '/' . $function . '.html', $html);
-
     }
 
     public function __toString()
     {
         return Echos::Prints('Routes initialization complete.');
+    }
+
+    public static function StringReplaceSlash($string)
+    {
+        return str_replace("\\", "/", $string);
     }
 
 }

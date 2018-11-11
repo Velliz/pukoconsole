@@ -23,7 +23,7 @@ class Elements
 
     use Commons, Echos;
 
-    public function __construct($type, $command)
+    public function __construct($root, $type, $command)
     {
         if ($type === '' || $type === null) {
             die('element name must defined');

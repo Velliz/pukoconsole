@@ -53,7 +53,7 @@ class Console
     {
         $this->root = $root;
         $this->args = $args;
-        if (!file_exists( __DIR__ . "/config/init.php")) {
+        if (!file_exists(__DIR__ . "/config/init.php")) {
             die(Echos::Prints('Console init file not found'));
         }
         $this->config = (include __DIR__ . "/config/init.php");
@@ -69,17 +69,25 @@ class Console
                 return $this->Setup($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'routes':
-                return new Routes(array(
-                    'directive' => $this->GetCommand(Console::DIRECTIVE),
-                    'action' => $this->GetCommand(Console::ACTION),
-                    'attribute' => $this->GetCommand(Console::ATTRIBUTE),
-                ), $this->root);
+                return new Routes($this->root,
+                    $this->GetCommand(Console::DIRECTIVE),
+                    $this->GetCommand(Console::ACTION),
+                    $this->GetCommand(Console::ATTRIBUTE)
+                );
                 break;
             case 'element':
-                return null;
+                return new Elements(
+                    $this->root,
+                    $this->GetCommand(Console::DIRECTIVE),
+                    $this->GetCommand(Console::ACTION)
+                );
                 break;
             case 'docs':
-                return null;
+                return new Docs(
+                    $this->root,
+                    $this->GetCommand(Console::DIRECTIVE),
+                    $this->GetCommand(Console::ACTION)
+                );
                 break;
             case 'serve':
                 return new Serve();
