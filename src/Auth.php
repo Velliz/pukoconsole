@@ -22,6 +22,8 @@ class Auth
 
     use Echos;
 
+    var $value = '';
+
     public function __construct($root, $value)
     {
         if ($value === null) {
@@ -30,15 +32,20 @@ class Auth
             ));
         }
 
-        $template = file_get_contents(__DIR__ . "template/plugins/auth");
+        $this->value = $value;
+
+        $template = file_get_contents(__DIR__ . "/template/plugins/auth");
 
         $template = str_replace('{{class}}', $value, $template);
-        if (!is_dir($root . 'plugins/auth')) {
-            mkdir($root . 'plugins/auth');
+        if (!is_dir($root . '/plugins/auth')) {
+            mkdir($root . '/plugins/auth');
         }
 
-        file_put_contents("plugins/auth/{$value}.php", $template);
+        file_put_contents($root . "/plugins/auth/{$value}.php", $template);
+    }
 
-        return Echos::Prints("base_auth {$value} created!");
+    public function __toString()
+    {
+        return Echos::Prints("auth {$this->value} created!");
     }
 }
