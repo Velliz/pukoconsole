@@ -101,7 +101,7 @@ class Routes
         $routes['page'][$this->attribute] = $data;
 
         file_put_contents(
-            $this->root . "config/routes.php",
+            $this->root . "/config/routes.php",
             '<?php $routes = ' . $this->var_export54($routes) . '; return $routes;'
         );
 
@@ -179,7 +179,7 @@ class Routes
     {
         $controller = Routes::StringReplaceSlash($controller);
         foreach ($this->lang as $key => $val) {
-            $ctrl = "{$this->root}assets/html/{$val}/{$controller}";
+            $ctrl = "{$this->root}/assets/html/{$val}/{$controller}";
             if (!file_exists($ctrl)) {
                 mkdir($ctrl, 0777, true);
             }
