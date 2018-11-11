@@ -10,6 +10,19 @@ Usage:
 php puko
 ```
 
+Finished:
+* Auth
+* Controller
+* Database
+* Serve
+
+Todo:
+* Element
+* Routes
+* Secure
+* Docs
+* Seeds
+
 Crafted with <3 from Bandung, Indonesia.
 
 Copyright 2018 by Didit Velliz

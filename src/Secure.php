@@ -9,7 +9,7 @@ namespace pukoconsole;
 class Secure
 {
 
-    public function __construct()
+    public function __construct($root)
     {
         echo "\nStart AES-256 secure initialization ...\n\n";
         echo "identifier   : ";

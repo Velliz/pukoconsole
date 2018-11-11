@@ -1,6 +1,17 @@
 <?php
+/**
+ * pukoconsole.
+ * Advanced console util that make pukoframework get things done on the fly.
+ * Copyright (c) 2018, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoconsole
+ * @since Version 0.1.0
+ */
 
 namespace pukoconsole;
+
+use pukoconsole\util\Echos;
 
 /**
  * Class Controller
@@ -9,26 +20,32 @@ namespace pukoconsole;
 class Controller
 {
 
-    public function __construct($value, $customValue)
+    use Echos;
+
+    public function __construct($root, $action, $value)
     {
-        if ($customValue === 'service') {
-            $varNewFile = file_get_contents("template/controller/service");
-        }
-        if ($customValue === 'view') {
-            $varNewFile = file_get_contents("template/controller/view");
-        }
+        $template = null;
 
         if ($value === null) {
-            exit('class_name not specified. example: php puko setup base_auth UserAuth');
+            die(Echos::Prints("class_name not specified." .
+                "example: php puko setup base_auth UserController"
+            ));
         }
-        $varNewFile = str_replace('{{class}}', $value, $varNewFile);
-        if (!is_dir('plugins/controller')) {
-            mkdir('plugins/controller');
-        }
-        file_put_contents("plugins/controller/" . $value . '.php', $varNewFile);
 
-        echo "\n... initialization completed.\n";
-        exit;
+        if ($action === 'view') {
+            $template = file_get_contents(__DIR__ . "/template/controller/view");
+        }
+        if ($action === 'service') {
+            $template = file_get_contents(__DIR__ . "template/controller/service");
+        }
+
+        $template = str_replace('{{class}}', $value, $template);
+        if (!is_dir($root . 'plugins/controller')) {
+            mkdir($root . 'plugins/controller');
+        }
+        file_put_contents($root . "plugins/controller/{$value}.php", $template);
+
+        return Echos::Prints("base_controller {$value} created!");
     }
 
 }

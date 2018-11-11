@@ -70,12 +70,9 @@ class Console
                 break;
             case 'routes':
                 return new Routes(array(
-                    /* view/service/list */
-                    'directive' => Console::DIRECTIVE,
-                    /* add/update/remove */
-                    'action' => Console::ACTION,
-                    /* user/{?}/data */
-                    'attribute' => Console::ATTRIBUTE,
+                    'directive' => $this->GetCommand(Console::DIRECTIVE),
+                    'action' => $this->GetCommand(Console::ACTION),
+                    'attribute' => $this->GetCommand(Console::ATTRIBUTE),
                 ), $this->root);
                 break;
             case 'element':
@@ -111,13 +108,20 @@ class Console
                 return new Database($this->root);
                 break;
             case 'secure':
-                return null;
+                return new Secure($this->root);
                 break;
             case 'auth':
-                return null;
+                return new Auth(
+                    $this->root,
+                    $this->GetCommand(Console::ACTION)
+                );
                 break;
             case 'controller':
-                return null;
+                return new Controller(
+                    $this->root,
+                    $this->GetCommand(Console::ACTION),
+                    $this->GetCommand(Console::ATTRIBUTE)
+                );
                 break;
             default:
                 return Echos::Prints("Setup exited with no process executed!");

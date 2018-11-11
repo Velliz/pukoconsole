@@ -1,13 +1,20 @@
 <?php
+/**
+ * pukoconsole.
+ * Advanced console util that make pukoframework get things done on the fly.
+ * Copyright (c) 2018, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoconsole
+ * @since Version 0.1.0
+ */
 
 namespace pukoconsole;
 
 /**
  * Class Seeds
  * @package pukoconsole
- *
- * A old fashioned nginx based multiple app style
- *
+ * @deprecated A old fashioned nginx based multiple app style
  */
 class Seeds
 {
