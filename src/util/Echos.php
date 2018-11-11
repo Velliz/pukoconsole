@@ -9,9 +9,12 @@ namespace pukoconsole\util;
 trait Echos
 {
 
-    public static function Prints($var)
+    public static function Prints($var, $break = true)
     {
-        return sprintf("\n%s\n", $var);
+        if ($break) {
+            return sprintf("\n%s\n", $var);
+        }
+        return sprintf("%s\n", $var);
     }
 
 }

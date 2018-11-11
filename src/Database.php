@@ -33,12 +33,12 @@ class Database
 
     /**
      * Database constructor.
-     * @param null $root_dir
+     * @param null $root
      * @throws Exception
      */
-    public function __construct($root_dir = null)
+    public function __construct($root = null)
     {
-        if ($root_dir === null) {
+        if ($root === null) {
             die(Echos::Prints('Base url required'));
         }
 
@@ -65,7 +65,7 @@ class Database
 
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $val) {
 
-            echo Echos::Prints(sprintf("Creating model %s.php", $val['TABLE_NAME']));
+            echo Echos::Prints(sprintf("Creating model %s.php", $val['TABLE_NAME']), false);
 
             $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
             $statement->execute();
@@ -79,28 +79,28 @@ class Database
 
                 if ($v['Key'] === 'PRI') $primary = $v['Field'];
 
-                if (in_array(array('char', 'text'), $v['Type'])) {
+                if (in_array($v['Type'], array('char', 'text'))) {
                     $initValue = "''";
                 }
-                if (in_array(array('int', 'double', 'tinyint'), $v['Type'])) {
+                if (in_array($v['Type'], array('int', 'double', 'tinyint'))) {
                     $initValue = 0;
                 }
 
-                $property .= file_get_contents(__DIR__ . "/template/assets/model_vars");
+                $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
                 $property = str_replace('{{field}}', $v['Field'], $property);
                 $property = str_replace('{{type}}', $v['Type'], $property);
                 $property = str_replace('{{value}}', $initValue, $property);
             }
 
-            $model_file = file_get_contents(__DIR__ . "/template/assets/model");
+            $model_file = file_get_contents(__DIR__ . "/template/model/model");
             $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
 
-            if (!is_dir($root_dir . 'plugins/model')) {
-                mkdir($root_dir . 'plugins/model');
+            if (!is_dir($root . '/plugins/model')) {
+                mkdir($root . '/plugins/model');
             }
-            file_put_contents($root_dir . "plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
+            file_put_contents($root . "/plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
 
         }
     }
@@ -119,7 +119,7 @@ class Database
         $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = {$dbName}";
+        WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
 
         return $dbi;
     }
