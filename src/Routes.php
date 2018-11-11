@@ -56,7 +56,7 @@ class Routes
 
         $this->routes = include "{$root}/config/routes.php";
 
-        if (in_array(array('view', 'service'), $this->directive)) {
+        if (in_array($this->directive, array('view', 'service'))) {
             $this->structure($this->routes['page']);
         } else if ($this->directive === 'list') {
             $this->lists($this->routes['page']);
@@ -94,15 +94,15 @@ class Routes
         $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
 
         $data = [
-            "controller" => $controller,
+            "controller" => Routes::StringReplaceBackSlash($controller),
             "function" => $function,
-            "accept" => explode(",", $accept)
+            "accept" => explode(",", strtoupper($accept))
         ];
-        $routes['page'][$this->attribute] = $data;
+        $this->routes['page'][$this->attribute] = $data;
 
         file_put_contents(
             $this->root . "/config/routes.php",
-            '<?php $routes = ' . $this->var_export54($routes) . '; return $routes;'
+            '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
         if ($this->directive === 'view') {
@@ -154,12 +154,14 @@ class Routes
 
     public function ProcessController($namespace, $class, $function, $kind)
     {
-        $path = "{$this->root}/controller/{$namespace}/{$class}.php";
+        $dir = "{$this->root}/{$namespace}";
+        $path = "{$this->root}/{$namespace}/{$class}.php";
         $replacement = "    public function {$function}() {}\n\n}";
 
         if (!file_exists($path)) {
-            $ctrl = file_get_contents(__DIR__ . "/controller/{$kind}");
-            $ctrl = str_replace("{{namespace}}", $namespace, $ctrl);
+            mkdir($dir, 0777, true);
+            $ctrl = file_get_contents(__DIR__ . "/template/controller/{$kind}");
+            $ctrl = str_replace("{{namespace}}", Routes::StringReplaceBackSlash($namespace), $ctrl);
             $ctrl = str_replace("{{class}}", $class, $ctrl);
         } else {
             $ctrl = file_get_contents($path);
@@ -197,6 +199,11 @@ class Routes
     public static function StringReplaceSlash($string)
     {
         return str_replace("\\", "/", $string);
+    }
+
+    public static function StringReplaceBackSlash($string)
+    {
+        return str_replace("/", "\\", $string);
     }
 
 }

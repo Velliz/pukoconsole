@@ -20,6 +20,10 @@ use pukoconsole\util\Echos;
 class Controller
 {
 
+    var $action;
+
+    var $value;
+
     use Echos;
 
     public function __construct($root, $action, $value)
@@ -31,6 +35,9 @@ class Controller
                 "example: php puko setup auth UserController"
             ));
         }
+
+        $this->action = $action;
+        $this->value = $value;
 
         if ($action === 'view') {
             $template = file_get_contents(__DIR__ . "/template/controller/view");
@@ -44,8 +51,11 @@ class Controller
             mkdir($root . '/plugins/controller');
         }
         file_put_contents($root . "/plugins/controller/{$value}.php", $template);
+    }
 
-        return Echos::Prints("{$action} controller {$value} created!");
+    public function __toString()
+    {
+        return Echos::Prints("{$this->action} controller {$this->value} created!");
     }
 
 }
