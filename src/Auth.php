@@ -27,7 +27,7 @@ class Auth
     public function __construct($root, $value)
     {
         if ($value === null) {
-            die(Echos::Prints("class_name not specified." .
+            die(Echos::Prints("class_name not specified. " .
                 "example: php puko setup auth UserAuth"
             ));
         }

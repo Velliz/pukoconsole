@@ -8,7 +8,7 @@
 
 use pukoframework\Framework;
 
-require '../../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 /*
  *---------------------------------------------------------------
@@ -52,4 +52,4 @@ define('START', microtime(true));
 //Initialize framework object
 $framework = new Framework();
 //Start framework
-$framework->Start('\\apps\\{{apps}}');
+$framework->Start();
