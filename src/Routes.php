@@ -74,7 +74,7 @@ class Routes
                 $this->add($pages);
                 break;
             case 'update':
-                $this->update();
+                $this->update($pages);
                 break;
             case 'remove':
                 $this->remove();
@@ -96,7 +96,7 @@ class Routes
         $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
 
         $data = [
-            "controller" => Routes::StringReplaceBackSlash($controller),
+            "controller" => $controller,
             "function" => $function,
             "accept" => explode(",", strtoupper($accept))
         ];
@@ -133,9 +133,29 @@ class Routes
         return Echos::Prints("Routes {$cNamespaces} {$function} added.");
     }
 
-    public function update()
+    public function update($segment)
     {
-        die(Echos::Prints('To risky. Please delete them manually.'));
+        if (!isset($segment[$this->attribute])) {
+            die(Echos::Prints("Routes is not registered! Add them first."));
+        }
+
+        $controller = Input::Read('Controller name (separate directory with \ key)');
+        $function = Input::Read('Function name');
+        $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
+
+        $data = [
+            "controller" => $controller,
+            "function" => $function,
+            "accept" => explode(",", strtoupper($accept))
+        ];
+        $this->routes['page'][$this->attribute] = $data;
+
+        file_put_contents(
+            $this->root . "/config/routes.php",
+            '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
+        );
+
+        return Echos::Prints("Routes {$function} modified.");
     }
 
     public function lists($routes = array())
@@ -156,9 +176,18 @@ class Routes
 
     public function ProcessController($namespace, $class, $function, $kind)
     {
+        $parameter = explode('/', $this->attribute);
+        $input = array();
+        foreach ($parameter as $key => $val) {
+            if ($val === '{?}') {
+                $input[] = '$' . "id{$key} = ''";
+            }
+        }
+        $input = implode(', ', $input);
+
         $dir = "{$this->root}/{$namespace}";
         $path = "{$this->root}/{$namespace}/{$class}.php";
-        $replacement = "    public function {$function}() {}\n\n}";
+        $replacement = "    public function {$function}({$input}) {}\n\n}";
 
         if (!file_exists($path)) {
             if (strpos($namespace, '/') !== false) {
@@ -202,7 +231,7 @@ class Routes
         $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
 
         $data = [
-            "controller" => Routes::StringReplaceBackSlash($controller),
+            "controller" => $controller,
             "function" => $function,
             "accept" => explode(",", strtoupper($accept))
         ];
