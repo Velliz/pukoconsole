@@ -77,12 +77,20 @@ class Database
             foreach ($column as $k => $v) {
                 $initValue = 'null';
 
-                if ($v['Key'] === 'PRI') $primary = $v['Field'];
+                if ($v['Key'] === 'PRI') {
+                    $primary = $v['Field'];
+                }
 
-                if (in_array($v['Type'], array('char', 'text'))) {
+                if (strpos($v['Type'], 'char') !== false) {
                     $initValue = "''";
                 }
-                if (in_array($v['Type'], array('int', 'double', 'tinyint'))) {
+                if (strpos($v['Type'], 'text') !== false) {
+                    $initValue = "''";
+                }
+                if (strpos($v['Type'], 'int') !== false) {
+                    $initValue = 0;
+                }
+                if (strpos($v['Type'], 'double') !== false) {
                     $initValue = 0;
                 }
 
