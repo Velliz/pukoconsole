@@ -91,7 +91,7 @@ class Console
                 );
                 break;
             case 'serve':
-                return new Serve();
+                return new Serve($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'help':
                 return $this->Help();
