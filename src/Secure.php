@@ -30,7 +30,7 @@ class Secure
         $configuration = str_replace('{{cookies}}', $cookies, $configuration);
         $configuration = str_replace('{{session}}', $session, $configuration);
 
-        file_put_contents($root . "/config/encryption.php", $configuration);
+        file_put_contents("{$root}/config/encryption.php", $configuration);
     }
 
     public function __toString()

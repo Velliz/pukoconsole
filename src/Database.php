@@ -43,9 +43,28 @@ class Database
         }
 
         $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+
+        $host = Input::Read('Hostname (Default: localhost)');
+        $port = Input::Read('Port (Default: 3306)');
+        $dbName = Input::Read('Database Name');
+
+        $user = Input::Read('Username');
+        $pass = Input::Read('Password');
+
+        $configuration = file_get_contents(__DIR__ . "/template/config/database");
+
+        $configuration = str_replace('{{type}}', $db, $configuration);
+        $configuration = str_replace('{{host}}', $host, $configuration);
+        $configuration = str_replace('{{user}}', $user, $configuration);
+        $configuration = str_replace('{{pass}}', $pass, $configuration);
+        $configuration = str_replace('{{dbname}}', $dbName, $configuration);
+        $configuration = str_replace('{{port}}', $port, $configuration);
+
+        file_put_contents("{$root}/config/database.php", $configuration);
+
         switch ($db) {
             case 'mysql':
-                $this->PDO = $this->GenerateMySQL();
+                $this->PDO = $this->GenerateMySQL($host, $port, $dbName, $user, $pass);
                 break;
             case 'oracle':
                 $this->GenerateOracle();
@@ -113,15 +132,16 @@ class Database
         }
     }
 
-    public function GenerateMySQL()
+    /**
+     * @param $host
+     * @param $port
+     * @param $dbName
+     * @param $user
+     * @param $pass
+     * @return PDO
+     */
+    public function GenerateMySQL($host, $port, $dbName, $user, $pass)
     {
-        $host = Input::Read('Hostname (Default: localhost)');
-        $port = Input::Read('Port (Default: 3306)');
-        $dbName = Input::Read('Database Name');
-
-        $user = Input::Read('Username');
-        $pass = Input::Read('Password');
-
         try {
             $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
             $dbi = new PDO($pdoConnection, $user, $pass);

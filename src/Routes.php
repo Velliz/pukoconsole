@@ -103,7 +103,7 @@ class Routes
         $this->routes['page'][$this->attribute] = $data;
 
         file_put_contents(
-            $this->root . "/config/routes.php",
+            "{$this->root}/config/routes.php",
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
@@ -151,7 +151,7 @@ class Routes
         $this->routes['page'][$this->attribute] = $data;
 
         file_put_contents(
-            $this->root . "/config/routes.php",
+            "{$this->root}/config/routes.php",
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
@@ -164,8 +164,7 @@ class Routes
         echo Echos::Prints("Routes list found ({$count}) entries.");
         foreach ($routes as $key => $value) {
             $accept = implode(",", $value["accept"]);
-            echo "{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]";
-            echo "\n";
+            Echos::Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
         }
     }
 
@@ -238,7 +237,7 @@ class Routes
         $this->routes[$type] = $data;
 
         file_put_contents(
-            $this->root . "/config/routes.php",
+            "{$this->root}/config/routes.php",
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
     }

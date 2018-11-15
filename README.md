@@ -1,7 +1,5 @@
 # Puko Console
 
-> Work in progress
-
 Advanced console util that make *pukoframework* get things done on the fly.
 
 Usage:
@@ -17,11 +15,14 @@ Finished:
 * Serve
 * Routes
 * Secure
+* Element
 
 Todo:
-* Element
-* Docs
-* ~~Seeds~~ [deprecated]
+* Automated Docs
+
+Future todo:
+* Migrate db
+* Generic db
 
 Crafted with <3 from Bandung, Indonesia.
 
