@@ -124,11 +124,18 @@ class Database
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
 
-            if (!is_dir($root . '/plugins/model')) {
-                mkdir($root . '/plugins/model');
+            if (!is_dir("{$root}/plugins/model")) {
+                mkdir("{$root}/plugins/model");
             }
             file_put_contents($root . "/plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
 
+            $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
+            $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
+
+            if (!is_dir("{$root}/tests/unit/model")) {
+                mkdir("{$root}/tests/unit/model");
+            }
+            file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}Test.php", $test_file);
         }
     }
 
