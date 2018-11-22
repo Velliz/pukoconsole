@@ -28,6 +28,6 @@ class Tests
 
     public function __toString()
     {
-        return Echos::Prints("Testing started.");
+        return Echos::Prints("Testing completed.");
     }
 }

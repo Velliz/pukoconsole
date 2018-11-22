@@ -136,6 +136,14 @@ class Database
                 mkdir("{$root}/tests/unit/model");
             }
             file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php", $test_file);
+
+            $test_file = file_get_contents(__DIR__ . "/template/controller/controller_tests");
+            $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
+
+            if (!is_dir("{$root}/tests/unit/controller")) {
+                mkdir("{$root}/tests/unit/controller");
+            }
+            file_put_contents("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
         }
     }
 

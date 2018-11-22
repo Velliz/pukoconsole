@@ -15,6 +15,8 @@ routes   Setup puko framework routes
 serve    Start project on localhost
          [port]
          
+tests    Start unit testing
+         
 help     Show help menu
 
 version  Show console version
