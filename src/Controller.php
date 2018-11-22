@@ -47,10 +47,10 @@ class Controller
         }
 
         $template = str_replace('{{class}}', $value, $template);
-        if (!is_dir($root . '/plugins/controller')) {
-            mkdir($root . '/plugins/controller');
+        if (!is_dir("{$root}/plugins/controller")) {
+            mkdir("{$root}/plugins/controller");
         }
-        file_put_contents($root . "/plugins/controller/{$value}.php", $template);
+        file_put_contents("{$root}/plugins/controller/{$value}.php", $template);
     }
 
     public function __toString()

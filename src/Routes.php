@@ -190,7 +190,7 @@ class Routes
 
         if (!file_exists($path)) {
             if (strpos($namespace, '/') !== false) {
-                mkdir($dir, 0777, true);
+                mkdir($dir);
             }
             $ctrl = file_get_contents(__DIR__ . "/template/controller/{$kind}");
             $ctrl = str_replace("{{namespace}}", Routes::StringReplaceBackSlash($namespace), $ctrl);
@@ -215,7 +215,7 @@ class Routes
         foreach ($this->lang as $key => $val) {
             $ctrl = "{$this->root}/assets/html/{$val}/{$controller}";
             if (!file_exists($ctrl)) {
-                mkdir($ctrl, 0777, true);
+                mkdir($ctrl);
             }
             $html = file_get_contents(__DIR__ . "/template/assets/html");
             $fname = "{$this->root}/assets/html/{$val}/{$controller}/{$function}.html";

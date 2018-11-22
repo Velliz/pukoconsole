@@ -135,7 +135,7 @@ class Database
             if (!is_dir("{$root}/tests/unit/model")) {
                 mkdir("{$root}/tests/unit/model");
             }
-            file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}Test.php", $test_file);
+            file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php", $test_file);
         }
     }
 

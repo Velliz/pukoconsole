@@ -93,6 +93,9 @@ class Console
             case 'serve':
                 return new Serve($this->GetCommand(Console::DIRECTIVE));
                 break;
+            case 'tests':
+                return new Tests($this->GetCommand(Console::DIRECTIVE));
+                break;
             case 'help':
                 return $this->Help();
                 break;
