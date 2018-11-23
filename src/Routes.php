@@ -164,7 +164,7 @@ class Routes
         echo Echos::Prints("Routes list found ({$count}) entries.");
         foreach ($routes as $key => $value) {
             $accept = implode(",", $value["accept"]);
-            Echos::Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
+            echo Echos::Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
         }
     }
 
