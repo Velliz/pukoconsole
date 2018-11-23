@@ -11,6 +11,9 @@ class {{table}}ModelTest extends TestCase
 
     protected function setUp()
     {
+        //comment this if want to run tests
+        $this->markTestIncomplete();
+
         $factory = array(
             'base' => $_SERVER['HTTP_HOST'],
             'root' => $_ENV['BASEDIR'],

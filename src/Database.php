@@ -93,6 +93,8 @@ class Database
             $property = "";
             $primary = "";
 
+            $data = [];
+
             foreach ($column as $k => $v) {
                 $initValue = 'null';
 
@@ -112,6 +114,8 @@ class Database
                 if (strpos($v['Type'], 'double') !== false) {
                     $initValue = 0;
                 }
+
+                $data[$v['Field']] = $initValue;
 
                 $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
                 $property = str_replace('{{field}}', $v['Field'], $property);
@@ -135,15 +139,36 @@ class Database
             if (!is_dir("{$root}/tests/unit/model")) {
                 mkdir("{$root}/tests/unit/model");
             }
-            file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php", $test_file);
+            if (!file_exists("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php")) {
+                file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php", $test_file);
+            }
+
+            $keyval = "";
+            $pointer = sizeof($data);
+            foreach ($data as $field => $value) {
+                if ($pointer == sizeof($data)) {
+                    $keyval .= "'{$field}' => {$value},\n";
+                } elseif ($pointer < sizeof($data) && $pointer > 1) {
+                    $keyval .= "            '{$field}' => {$value},\n";
+                } elseif ($pointer == 1) {
+                    $keyval .= "            '{$field}' => {$value}";
+                }
+                $pointer--;
+            }
+            $destruct = "array(
+            {$keyval}
+            );";
 
             $test_file = file_get_contents(__DIR__ . "/template/controller/controller_tests");
             $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
+            $test_file = str_replace('{{data}}', $destruct, $test_file);
 
             if (!is_dir("{$root}/tests/unit/controller")) {
                 mkdir("{$root}/tests/unit/controller");
             }
-            file_put_contents("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
+            if (!file_exists("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php")) {
+                file_put_contents("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
+            }
         }
     }
 

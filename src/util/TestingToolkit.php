@@ -49,16 +49,13 @@ trait TestingToolkit
         if (!is_dir("{$_ENV['BASEDIR']}/_docs")) {
             mkdir("{$_ENV['BASEDIR']}/_docs");
         }
-        if (file_exists("{$_ENV['BASEDIR']}/_docs/access.md")) {
-            $data = file_get_contents("{$_ENV['BASEDIR']}/_docs/access.md");
-        } else {
-            $data = "";
-        }
+
+        $data = "";
 
         $theData = json_encode($request['data'], JSON_PRETTY_PRINT);
         $response = json_encode($response, JSON_PRETTY_PRINT);
 
-        $data .= "```{$request['url']}``` [{$request['method']}]\n";
+        $data .= "\n```{$request['url']}``` [{$request['method']}]\n";
 
         $data .= "\nRequest {$request['dataType']}\n";
         $data .= "\n```json\n";
@@ -71,7 +68,7 @@ trait TestingToolkit
         $data .= "\n```\n";
         $data .= "\n---\n";
 
-        file_put_contents("{$_ENV['BASEDIR']}/_docs/access.md", $data);
+        file_put_contents("{$_ENV['BASEDIR']}/_docs/{$request['name']}.md", $data);
     }
 
 }
