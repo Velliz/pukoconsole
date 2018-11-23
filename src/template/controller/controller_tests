@@ -60,25 +60,6 @@ class {{table}}ControllerTest extends TestCase
         $this->WriteDocs($docs, $response);
     }
 
-    public function testDelete()
-    {
-        $url = "{{table}}/1/delete";
-
-        $data = array();
-
-        $response = $this->SendRequest($this->bearer, "{$_SERVER['HTTP_HOST']}{$url}", "GET", "JSON", $data);
-        $this->assertNotNull($response);
-
-        $docs = array(
-            'name' => $this->name,
-            'url' => $url,
-            'method' => "GET",
-            'dataType' => "JSON",
-            'data' => $data,
-        );
-        $this->WriteDocs($docs, $response);
-    }
-
     public function testRead()
     {
         // get single
@@ -148,7 +129,25 @@ class {{table}}ControllerTest extends TestCase
             'data' => $data,
         );
         $this->WriteDocs($docs, $response);
+    }
 
+    public function testDelete()
+    {
+        $url = "{{table}}/1/delete";
+
+        $data = array();
+
+        $response = $this->SendRequest($this->bearer, "{$_SERVER['HTTP_HOST']}{$url}", "GET", "JSON", $data);
+        $this->assertNotNull($response);
+
+        $docs = array(
+            'name' => $this->name,
+            'url' => $url,
+            'method' => "GET",
+            'dataType' => "JSON",
+            'data' => $data,
+        );
+        $this->WriteDocs($docs, $response);
     }
 
 }

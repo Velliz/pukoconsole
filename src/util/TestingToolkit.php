@@ -50,7 +50,11 @@ trait TestingToolkit
             mkdir("{$_ENV['BASEDIR']}/_docs");
         }
 
-        $data = "";
+        if (file_exists("{$_ENV['BASEDIR']}/_docs/{$request['name']}.md")) {
+            $data = file_get_contents("{$_ENV['BASEDIR']}/_docs/{$request['name']}.md");
+        } else {
+            $data = "";
+        }
 
         $theData = json_encode($request['data'], JSON_PRETTY_PRINT);
         $response = json_encode($response, JSON_PRETTY_PRINT);
