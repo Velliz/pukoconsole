@@ -27,7 +27,7 @@ trait TestingToolkit
         curl_setopt($curl, CURLOPT_USERAGENT, 'TestRequest');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         if ($type === "JSON") {
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization));
         }
         if ($type === "DEF") {
@@ -56,8 +56,8 @@ trait TestingToolkit
             $data = "";
         }
 
-        $theData = json_encode($request['data'], JSON_PRETTY_PRINT);
-        $response = json_encode($response, JSON_PRETTY_PRINT);
+        $theData = json_encode($request['data'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $response = json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         $data .= "\n```{$request['url']}``` [{$request['method']}]\n";
 
