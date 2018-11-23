@@ -61,10 +61,12 @@ trait TestingToolkit
 
         $data .= "\n```{$request['url']}``` [{$request['method']}]\n";
 
-        $data .= "\nRequest {$request['dataType']}\n";
-        $data .= "\n```json\n";
-        $data .= $theData;
-        $data .= "\n```\n";
+        if (sizeof($request['data']) > 0) {
+            $data .= "\nRequest {$request['dataType']}\n";
+            $data .= "\n```json\n";
+            $data .= $theData;
+            $data .= "\n```\n";
+        }
 
         $data .= "\nResponse\n";
         $data .= "\n```json\n";
