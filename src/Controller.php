@@ -46,6 +46,7 @@ class Controller
             $template = file_get_contents(__DIR__ . "/template/controller/service");
         }
 
+        $template = str_replace('{{namespace}}', 'plugins\controller', $template);
         $template = str_replace('{{class}}', $value, $template);
         if (!is_dir("{$root}/plugins/controller")) {
             mkdir("{$root}/plugins/controller");
