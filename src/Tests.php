@@ -19,9 +19,11 @@ class Tests
 
     /**
      * Serve constructor.
+     * @param $directive
      */
-    public function __construct()
+    public function __construct($directive)
     {
+        Echos::Prints("Preparing test using " . $directive, true);
         echo exec("vendor\bin\phpunit");
         return true;
     }

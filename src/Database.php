@@ -16,6 +16,10 @@ use PDO;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
 
+/**
+ * Class Database
+ * @package pukoconsole
+ */
 class Database
 {
 
