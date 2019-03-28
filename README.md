@@ -21,9 +21,5 @@ Todo:
 * Automated Docs
 
 Future todo:
-* Migrate db
-* Generic db
-
-Crafted with <3 from Bandung, Indonesia.
-
-Copyright 2018 by Didit Velliz
+* Migrate database
+* Generic database

@@ -1,7 +1,5 @@
 
-Puko Framework Console 
-
-Commands list:
+-- Puko Framework Console --
 
 setup    Setup puko framework installation
          [db]
@@ -15,7 +13,10 @@ routes   Setup puko framework routes
 serve    Start project on localhost
          [port]
          
-tests    Start unit testing
+tests    Start unit testing (preview)
+
+element  Generate or download view element (beta)
+         <name> [add/download]
          
 help     Show help menu
 

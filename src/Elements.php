@@ -29,31 +29,41 @@ class Elements
 
     public function __construct($root, $config, $type, $command)
     {
+        $this->config = $config;
+        $this->command = $command;
+        $this->type = $type;
+
         if ($type === '' || $type === null) {
             die(Echos::Prints('Element name must defined!'));
         }
 
         if ($command === 'add') {
-            $this->AddRepo($root, $type);
+            $this->AddElements($root, $type);
         }
         if ($command === "download") {
-            $this->DownloadRepo($root);
+            $this->DownloadElements($root);
         }
     }
 
-    public function AddRepo($root, $type)
+    /**
+     * @param $root
+     * @param $type
+     */
+    public function AddElements($root, $type)
     {
         $ltype = strtolower($type);
 
         $element = file_get_contents(__DIR__ . "/template/plugins/elements");
-        $path = "ROOT . {$type}::class . '.html'";
+        $path = '\pukoframework\Framework::$factory->getRoot()' . " . {$type}::class . '.html'";
         $element = str_replace('{{path}}', $path, $element);
+        $element = str_replace('{{namespaces}}', $ltype, $element);
+        $element = str_replace('{{class}}', $type, $element);
 
-        if (!file_exists(__DIR__ . "/plugins/elements/{$ltype}")) {
-            mkdir(__DIR__ . "/plugins/elements/{$ltype}");
+        if (!is_dir("{$root}/plugins/elements/{$ltype}")) {
+            mkdir("{$root}/plugins/elements/{$ltype}");
         }
-        if (!file_exists(__DIR__ . "/plugins/elements/{$ltype}/{$type}.php")) {
-            file_put_contents(__DIR__ . "/plugins/elements/{$ltype}/{$type}.php", $element);
+        if (!file_exists("/plugins/elements/{$ltype}/{$type}.php")) {
+            file_put_contents("{$root}/plugins/elements/{$ltype}/{$type}.php", $element);
         }
 
         //region html template
@@ -66,20 +76,20 @@ class Elements
 
         //region js template
         $js = file_get_contents(__DIR__ . "/template/plugins/js");
-        if (!file_exists("plugins/elements/{$ltype}/{$ltype}.js")) {
-            file_put_contents("plugins/elements/{$ltype}/{$ltype}.js", $js);
+        if (!file_exists("{$root}/plugins/elements/{$ltype}/{$ltype}.js")) {
+            file_put_contents("{$root}/plugins/elements/{$ltype}/{$ltype}.js", $js);
         }
         //end region js template
 
         //region css template
         $css = file_get_contents(__DIR__ . "/template/plugins/css");
-        if (!file_exists("plugins/elements/{$ltype}/{$ltype}.css")) {
-            file_put_contents("plugins/elements/{$ltype}/{$ltype}.css", $css);
+        if (!file_exists("{$root}/plugins/elements/{$ltype}/{$ltype}.css")) {
+            file_put_contents("{$root}/plugins/elements/{$ltype}/{$ltype}.css", $css);
         }
         //end region css template
     }
 
-    public function DownloadRepo($root)
+    public function DownloadElements($root)
     {
 
         $url = "{$this->config['repo']}/{$this->type}";
@@ -87,7 +97,7 @@ class Elements
 
         $data = json_decode($this->download($url), true);
 
-        if (!file_exists("{$root}/plugins/elements/{$ltype}")) {
+        if (!is_dir("{$root}/plugins/elements/{$ltype}")) {
             mkdir("{$root}/plugins/elements/{$ltype}");
         }
 

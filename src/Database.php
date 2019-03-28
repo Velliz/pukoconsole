@@ -71,13 +71,13 @@ class Database
                 $this->PDO = $this->GenerateMySQL($host, $port, $dbName, $user, $pass);
                 break;
             case 'oracle':
-                $this->GenerateOracle();
+                $this->GenerateOracle($host, $port, $dbName, $user, $pass);
                 break;
             case 'sqlsrv':
-                $this->GenerateSqlServer();
+                $this->GenerateSqlServer($host, $port, $dbName, $user, $pass);
                 break;
             case 'mongo':
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+                $this->GenerateMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
                 die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
@@ -201,18 +201,21 @@ class Database
 
     }
 
-    public function GenerateOracle()
+    public function GenerateOracle($host, $port, $dbName, $user, $pass)
     {
+        //todo: generate oracle support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
-    public function GenerateSqlServer()
+    public function GenerateSqlServer($host, $port, $dbName, $user, $pass)
     {
+        //todo: generate mssql support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
-    public function GenerateMongo()
+    public function GenerateMongo($host, $port, $dbName, $user, $pass)
     {
+        //todo: generate mongo support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
