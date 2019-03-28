@@ -214,7 +214,7 @@ class Routes
         $controller = Routes::StringReplaceSlash($controller);
         foreach ($this->lang as $key => $val) {
             $ctrl = "{$this->root}/assets/html/{$val}/{$controller}";
-            if (!file_exists($ctrl)) {
+            if (!is_dir($ctrl)) {
                 mkdir($ctrl);
             }
             $html = file_get_contents(__DIR__ . "/template/assets/html");
