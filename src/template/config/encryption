@@ -1,7 +1,9 @@
 <?php return [
-    'method'     => 'AES-256-CBC',
-    'key'        => '{{key}}',
-    'identifier' => '{{identifier}}',
-    'cookies'    => '{{cookies}}',
-    'session'    => '{{session}}',
+    'method'      => "AES-256-CBC",
+    'key'         => "{{key}}",
+    'identifier'  => "{{identifier}}",
+    'cookies'     => "{{cookies}}",
+    'session'     => "{{session}}",
+    'expiredText' => "{{expiredText}}",
+    'errorText'   => "{{errorText}}",
 ];

@@ -99,6 +99,9 @@ class Console
             case 'help':
                 return $this->Help();
                 break;
+            case 'generate':
+                return $this;
+                break;
             case 'version':
                 return $this;
                 break;
@@ -135,6 +138,12 @@ class Console
                     $this->GetCommand(Console::ATTRIBUTE)
                 );
                 break;
+            case 'model':
+                return new Models(
+                    $this->root,
+                    $this->GetCommand(Console::ACTION),
+                    $this->GetCommand(Console::ATTRIBUTE)
+                );
             default:
                 return Echos::Prints("Setup exited with no process executed!");
                 break;

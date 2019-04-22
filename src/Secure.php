@@ -22,6 +22,8 @@ class Secure
         $key = Input::Read("Secure key");
         $cookies = Input::Read("Cookies name");
         $session = Input::Read("Session name");
+        $expired = Input::Read("Session expired display text");
+        $error = Input::Read("Error display text");
 
         $configuration = file_get_contents(__DIR__ . "/template/config/encryption");
 
@@ -29,6 +31,8 @@ class Secure
         $configuration = str_replace('{{identifier}}', $key, $configuration);
         $configuration = str_replace('{{cookies}}', $cookies, $configuration);
         $configuration = str_replace('{{session}}', $session, $configuration);
+        $configuration = str_replace('{{expiredText}}', $expired, $configuration);
+        $configuration = str_replace('{{errorText}}', $error, $configuration);
 
         file_put_contents("{$root}/config/encryption.php", $configuration);
     }

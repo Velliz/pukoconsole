@@ -137,6 +137,7 @@ class Database
             }
             file_put_contents($root . "/plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
 
+            //region generate model test classes
             $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
             $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
 
@@ -173,6 +174,7 @@ class Database
             if (!file_exists("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php")) {
                 file_put_contents("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
             }
+            //end region generate model test classes
         }
     }
 
