@@ -3,6 +3,7 @@
 namespace pukoconsole;
 
 use Exception;
+use PDO;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
 
@@ -12,6 +13,16 @@ use pukoconsole\util\Input;
  */
 class GenerateDatabase
 {
+
+    /**
+     * @var PDO
+     */
+    var $PDO;
+
+    /**
+     * @var string
+     */
+    var $query = '';
 
     /**
      * Database constructor.
@@ -43,6 +54,40 @@ class GenerateDatabase
         $configuration = str_replace('{{port}}', $port, $configuration);
 
         file_put_contents("{$root}/config/database.php", $configuration);
+
+        switch ($db) {
+            case 'mysql':
+                $this->PDO = $this->GenerateSchema($host, $port, $dbName, $user, $pass);
+                break;
+            default:
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+        }
+
+        $statement = $this->PDO->prepare($this->query);
+        $statement->execute();
+    }
+
+    /**
+     * @param $host
+     * @param $port
+     * @param $dbName
+     * @param $user
+     * @param $pass
+     * @return PDO
+     */
+    public function GenerateSchema($host, $port, $dbName, $user, $pass)
+    {
+        try {
+            $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
+            $dbi = new PDO($pdoConnection, $user, $pass);
+            $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $this->query = "CREATE DATABASE {$dbName};";
+
+            return $dbi;
+        } catch (Exception $ex) {
+            die(Echos::Prints("Failed to connect."));
+        }
 
     }
 
