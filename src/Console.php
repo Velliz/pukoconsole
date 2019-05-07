@@ -100,13 +100,30 @@ class Console
                 return $this->Help();
                 break;
             case 'generate':
-                return $this;
+                return $this->Generate($this->GetCommand(Console::DIRECTIVE));
                 break;
             case 'version':
                 return $this;
                 break;
             default:
                 return $this->Help();
+                break;
+        }
+    }
+
+    /**
+     * @param $kind
+     * @return GenerateDatabase|string
+     * @throws Exception
+     */
+    public function Generate($kind)
+    {
+        switch ($kind) {
+            case 'db':
+                return new GenerateDatabase($this->root);
+                break;
+            default:
+                return Echos::Prints("Setup exited with no process executed!");
                 break;
         }
     }

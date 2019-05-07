@@ -159,11 +159,17 @@ class Models
         $pointer = sizeof($data);
         foreach ($data as $field => $value) {
             if ($pointer == sizeof($data)) {
-                $keyval .= "'{$field}' => {$value},\n";
+                if (!is_array($value)) {
+                    $keyval .= "'{$field}' => {$value},\n";
+                }
             } elseif ($pointer < sizeof($data) && $pointer > 1) {
-                $keyval .= "            '{$field}' => {$value},\n";
+                if (!is_array($value)) {
+                    $keyval .= "    '{$field}' => {$value},\n";
+                }
             } elseif ($pointer == 1) {
-                $keyval .= "            '{$field}' => {$value}";
+                if (!is_array($value)) {
+                    $keyval .= "    '{$field}' => {$value}";
+                }
             }
             $pointer--;
         }
