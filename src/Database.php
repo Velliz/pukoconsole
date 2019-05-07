@@ -46,26 +46,66 @@ class Database
             die(Echos::Prints('Base url required'));
         }
 
-        $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+        $input = true;
+        $configuration = array();
+        while ($input) {
+            $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+            if (strlen($db) <= 0) {
+                $db = 'mysql';
+            }
+            $host = Input::Read('Hostname (Default: localhost)');
+            if (strlen($host) <= 0) {
+                $host = 'localhost';
+            }
+            $port = Input::Read('Port (Default: 3306)');
+            if (strlen($port) <= 0) {
+                $port = '3306';
+            }
+            $schema = Input::Read('Schema Name (primary)');
+            if (strlen($schema) <= 0) {
+                $schema = 'primary';
+            }
+            $dbName = Input::Read('Database Name');
+            $user = Input::Read('Username');
+            $pass = Input::Read('Password');
 
-        $host = Input::Read('Hostname (Default: localhost)');
-        $port = Input::Read('Port (Default: 3306)');
-        $dbName = Input::Read('Database Name');
+            $cf = file_get_contents(__DIR__ . "/template/config/database_item");
 
-        $user = Input::Read('Username');
-        $pass = Input::Read('Password');
+            $cf = str_replace('{{type}}', $db, $cf);
+            $cf = str_replace('{{schema}}', $schema, $cf);
+            $cf = str_replace('{{host}}', $host, $cf);
+            $cf = str_replace('{{user}}', $user, $cf);
+            $cf = str_replace('{{pass}}', $pass, $cf);
+            $cf = str_replace('{{dbname}}', $dbName, $cf);
+            $cf = str_replace('{{port}}', $port, $cf);
 
-        $configuration = file_get_contents(__DIR__ . "/template/config/database");
+            $configuration[$schema] = $cf;
 
-        $configuration = str_replace('{{type}}', $db, $configuration);
-        $configuration = str_replace('{{host}}', $host, $configuration);
-        $configuration = str_replace('{{user}}', $user, $configuration);
-        $configuration = str_replace('{{pass}}', $pass, $configuration);
-        $configuration = str_replace('{{dbname}}', $dbName, $configuration);
-        $configuration = str_replace('{{port}}', $port, $configuration);
+            if (strlen($dbName) > 0) {
+                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass);
+            }
 
-        file_put_contents("{$root}/config/database.php", $configuration);
+            $more = Input::Read('Tambahkan koneksi lain? (y/n)');
+            if ($more !== 'y') {
+                $input = false;
+            }
+        }
 
+        $database = file_get_contents(__DIR__ . "/template/config/database");
+        $holder = "";
+
+        foreach ($configuration as $item) {
+            $holder .= $item;
+            $holder .= "\n";
+        }
+
+        $database = str_replace('{{configuration}}', $holder, $database);
+        file_put_contents("{$root}/config/database.php", $database);
+
+    }
+
+    public function Setup($root, $db, $host, $port, $dbName, $user, $pass)
+    {
         switch ($db) {
             case 'mysql':
                 $this->PDO = $this->GenerateMySQL($host, $port, $dbName, $user, $pass);

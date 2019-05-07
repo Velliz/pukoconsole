@@ -57,11 +57,11 @@ class Routes
         $this->routes = include "{$root}/config/routes.php";
 
         if (in_array($this->directive, array('view', 'service'))) {
-            $this->structure($this->routes['page']);
+            $this->structure($this->routes['router']);
         } else if (in_array($this->directive, array('error', 'lost'))) {
             $this->errorOrLost($this->directive);
         } else if ($this->directive === 'list') {
-            $this->lists($this->routes['page']);
+            $this->lists($this->routes['router']);
         } else {
             $this->structure($this->routes[$this->directive]);
         }
@@ -100,7 +100,7 @@ class Routes
             "function" => $function,
             "accept" => explode(",", strtoupper($accept))
         ];
-        $this->routes['page'][$this->attribute] = $data;
+        $this->routes['router'][$this->attribute] = $data;
 
         file_put_contents(
             "{$this->root}/config/routes.php",
@@ -148,7 +148,7 @@ class Routes
             "function" => $function,
             "accept" => explode(",", strtoupper($accept))
         ];
-        $this->routes['page'][$this->attribute] = $data;
+        $this->routes['router'][$this->attribute] = $data;
 
         file_put_contents(
             "{$this->root}/config/routes.php",

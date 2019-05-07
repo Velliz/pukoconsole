@@ -1,0 +1,9 @@
+$db['{{schema}}'] = [
+    'dbType' => '{{type}}',
+    'host'   => '{{host}}',
+    'user'   => '{{user}}',
+    'pass'   => '{{pass}}',
+    'dbName' => '{{dbname}}',
+    'port'   => '{{port}}',
+    'cache'   => false,
+];

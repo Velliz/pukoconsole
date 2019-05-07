@@ -53,16 +53,6 @@ class {{table}}ModelTest extends TestCase
 
     }
 
-    public function testGetCreator()
-    {
-
-    }
-
-    public function testGetCreated()
-    {
-
-    }
-
     public function testGetLastData()
     {
 
