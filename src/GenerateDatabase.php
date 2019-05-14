@@ -5,7 +5,6 @@ namespace pukoconsole;
 use Exception;
 use PDO;
 use pukoconsole\util\Echos;
-use pukoconsole\util\Input;
 
 /**
  * Class GenerateDatabase
@@ -35,36 +34,29 @@ class GenerateDatabase
             die(Echos::Prints('Base url required'));
         }
 
-        $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+        $configuration = require("{$root}/config/database.php");
+        if (!isset($configuration['primary'])) {
+            throw new Exception('database connecton file error!');
+        }
+        $configuration = $configuration['primary'];
 
-        $host = Input::Read('Hostname (Default: localhost)');
-        $port = Input::Read('Port (Default: 3306)');
-        $dbName = Input::Read('Database Name');
-
-        $user = Input::Read('Username');
-        $pass = Input::Read('Password');
-
-        $configuration = file_get_contents(__DIR__ . "/template/config/database");
-
-        $configuration = str_replace('{{type}}', $db, $configuration);
-        $configuration = str_replace('{{host}}', $host, $configuration);
-        $configuration = str_replace('{{user}}', $user, $configuration);
-        $configuration = str_replace('{{pass}}', $pass, $configuration);
-        $configuration = str_replace('{{dbname}}', $dbName, $configuration);
-        $configuration = str_replace('{{port}}', $port, $configuration);
-
-        file_put_contents("{$root}/config/database.php", $configuration);
-
-        switch ($db) {
+        switch ($configuration['dbType']) {
             case 'mysql':
-                $this->PDO = $this->GenerateSchema($host, $port, $dbName, $user, $pass);
+                $this->PDO = $this->GenerateSchema($configuration['host'], $configuration['port'],
+                    $configuration['dbName'], $configuration['user'], $configuration['pass']);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $configuration['dbType'])));
         }
 
-        $statement = $this->PDO->prepare($this->query);
-        $statement->execute();
+        try {
+            $statement = $this->PDO->prepare($this->query);
+            $statement->execute();
+
+            //todo: scan all model and generate the table
+        } catch (Exception $ex) {
+            die(Echos::Prints("Database creation failed or database already exists."));
+        }
     }
 
     /**

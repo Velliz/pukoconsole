@@ -13,6 +13,7 @@ routes   Setup puko framework routes
 
 generate Auto generate service
          [db]
+         [alter]
 
 serve    Start project on localhost
          [port]
