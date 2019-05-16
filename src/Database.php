@@ -38,9 +38,9 @@ class Database
     /**
      * Database constructor.
      * @param null $root
-     * @throws Exception
+     * @param $kinds
      */
-    public function __construct($root = null)
+    public function __construct($root = null, $kinds)
     {
         if ($root === null) {
             die(Echos::Prints('Base url required'));
@@ -81,8 +81,11 @@ class Database
 
             $configuration[$schema] = $cf;
 
-            if (strlen($dbName) > 0) {
+            if ($kinds === 'setup') {
                 $this->Setup($root, $db, $host, $port, $dbName, $user, $pass);
+            }
+            if ($kinds === 'generate') {
+                $this->Generate($root, $db, $host, $port, $dbName, $user, $pass);
             }
 
             $more = Input::Read('Tambahkan koneksi lain? (y/n)');
@@ -108,16 +111,16 @@ class Database
     {
         switch ($db) {
             case 'mysql':
-                $this->PDO = $this->GenerateMySQL($host, $port, $dbName, $user, $pass);
+                $this->PDO = $this->SetupMySQL($host, $port, $dbName, $user, $pass);
                 break;
             case 'oracle':
-                $this->GenerateOracle($host, $port, $dbName, $user, $pass);
+                $this->SetupOracle($host, $port, $dbName, $user, $pass);
                 break;
             case 'sqlsrv':
-                $this->GenerateSqlServer($host, $port, $dbName, $user, $pass);
+                $this->SetupSqlServer($host, $port, $dbName, $user, $pass);
                 break;
             case 'mongo':
-                $this->GenerateMongo($host, $port, $dbName, $user, $pass);
+                $this->SetupMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
                 die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
@@ -218,6 +221,26 @@ class Database
         }
     }
 
+    public function Generate($root, $db, $host, $port, $dbName, $user, $pass)
+    {
+        switch ($db) {
+            case 'mysql':
+                $this->GenerateMySQL($root, $host, $port, $dbName, $user, $pass);
+                break;
+            case 'oracle':
+                //$this->GenerateOracle($host, $port, $dbName, $user, $pass);
+                break;
+            case 'sqlsrv':
+                //$this->GenerateSqlServer($host, $port, $dbName, $user, $pass);
+                break;
+            case 'mongo':
+                //$this->GenerateMongo($host, $port, $dbName, $user, $pass);
+                break;
+            default:
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+        }
+    }
+
     /**
      * @param $host
      * @param $port
@@ -226,7 +249,7 @@ class Database
      * @param $pass
      * @return PDO
      */
-    public function GenerateMySQL($host, $port, $dbName, $user, $pass)
+    public function SetupMySQL($host, $port, $dbName, $user, $pass)
     {
         try {
             $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
@@ -243,22 +266,51 @@ class Database
 
     }
 
-    public function GenerateOracle($host, $port, $dbName, $user, $pass)
+    public function SetupOracle($host, $port, $dbName, $user, $pass)
     {
         //todo: generate oracle support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
-    public function GenerateSqlServer($host, $port, $dbName, $user, $pass)
+    public function SetupSqlServer($host, $port, $dbName, $user, $pass)
     {
         //todo: generate mssql support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
-    public function GenerateMongo($host, $port, $dbName, $user, $pass)
+    public function SetupMongo($host, $port, $dbName, $user, $pass)
     {
         //todo: generate mongo support via PDO interface
         die(Echos::Prints("Sorry, this option not yet supported."));
+    }
+
+    public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass)
+    {
+        $fileList = scandir($root . '/plugins/model');
+        foreach ($fileList as $file) {
+            if (in_array('php', explode('.', $file))) {
+                //todo: file parser here
+            }
+        }
+
+        /*
+        try {
+            $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
+            $dbi = new PDO($pdoConnection, $user, $pass);
+            $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+
+
+            $this->query = "CREATE TABLE %s (";
+
+            $this->query .= ");";
+
+            return $dbi;
+        } catch (Exception $ex) {
+            die(Echos::Prints("Failed to connect."));
+        }
+        */
     }
 
     public function __toString()

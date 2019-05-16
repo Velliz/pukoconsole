@@ -18,6 +18,10 @@
       "url": "https://github.com/Velliz/pukoconsole"
     }
   ],
+  "require": {
+    "php": ">=7.0",
+    "nikic/php-parser": "v4.2.0"
+  },
   "autoload": {
     "psr-4": {
       "pukoconsole\\": "src/"

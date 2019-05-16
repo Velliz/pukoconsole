@@ -113,14 +113,14 @@ class Console
 
     /**
      * @param $kind
-     * @return GenerateDatabase|string
+     * @return string
      * @throws Exception
      */
     public function Generate($kind)
     {
         switch ($kind) {
             case 'db':
-                return new GenerateDatabase($this->root);
+                return new Database($this->root, 'generate');
                 break;
             default:
                 return Echos::Prints("Setup exited with no process executed!");
@@ -137,7 +137,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database($this->root);
+                return new Database($this->root, 'setup');
                 break;
             case 'secure':
                 return new Secure($this->root);
