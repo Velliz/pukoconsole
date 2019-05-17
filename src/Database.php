@@ -13,6 +13,9 @@ namespace pukoconsole;
 
 use Exception;
 use PDO;
+use PhpParser\Error;
+use PhpParser\NodeDumper;
+use PhpParser\ParserFactory;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
 
@@ -290,6 +293,17 @@ class Database
         foreach ($fileList as $file) {
             if (in_array('php', explode('.', $file))) {
                 //todo: file parser here
+                $code = file_get_contents($root . '/plugins/model/' . $file);
+                $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+                try {
+                    $ast = $parser->parse($code);
+                } catch (Error $error) {
+                    echo "Parse error: {$error->getMessage()}\n";
+                    return;
+                }
+
+                $dumper = new NodeDumper();
+                echo $dumper->dump($ast) . "\n";
             }
         }
 
