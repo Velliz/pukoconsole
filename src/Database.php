@@ -168,7 +168,8 @@ class Database
 
                 $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
                 $property = str_replace('{{field}}', $v['Field'], $property);
-                $property = str_replace('{{type}}', "{$v['Type']} {$v['Extra']}", $property);
+                $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
+                $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
                 $property = str_replace('{{value}}', $initValue, $property);
             }
 
