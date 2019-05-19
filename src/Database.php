@@ -13,9 +13,7 @@ namespace pukoconsole;
 
 use Exception;
 use PDO;
-use PhpParser\Error;
-use PhpParser\NodeDumper;
-use PhpParser\ParserFactory;
+use ReflectionClass;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
 
@@ -42,6 +40,7 @@ class Database
      * Database constructor.
      * @param null $root
      * @param $kinds
+     * @throws \ReflectionException
      */
     public function __construct($root = null, $kinds)
     {
@@ -224,6 +223,16 @@ class Database
         }
     }
 
+    /**
+     * @param $root
+     * @param $db
+     * @param $host
+     * @param $port
+     * @param $dbName
+     * @param $user
+     * @param $pass
+     * @throws \ReflectionException
+     */
     public function Generate($root, $db, $host, $port, $dbName, $user, $pass)
     {
         switch ($db) {
@@ -259,8 +268,10 @@ class Database
             $dbi = new PDO($pdoConnection, $user, $pass);
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
+            if (strlen($dbName) > 0) {
+                $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
+            }
 
             return $dbi;
         } catch (Exception $ex) {
@@ -287,44 +298,106 @@ class Database
         die(Echos::Prints("Sorry, this option not yet supported."));
     }
 
+    /**
+     * @param $root
+     * @param $host
+     * @param $port
+     * @param $dbName
+     * @param $user
+     * @param $pass
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass)
     {
+        if (strlen($dbName) === 0) {
+            throw new Exception('Database connection setup required.');
+        }
+        $this->PDO = $this->SetupMySQL($host, $port, $dbName, $user, $pass);
+
         $fileList = scandir($root . '/plugins/model');
         foreach ($fileList as $file) {
             if (in_array('php', explode('.', $file))) {
-                //todo: file parser here
-                $code = file_get_contents($root . '/plugins/model/' . $file);
-                $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-                try {
-                    $ast = $parser->parse($code);
-                } catch (Error $error) {
-                    echo "Parse error: {$error->getMessage()}\n";
-                    return;
+                $file = explode('.', $file);
+                $model = '\\plugins\\model\\' . $file[0];
+                $object = new $model;
+
+                $pdc = new ReflectionClass($object);
+                $global = $this->PDCParser($pdc->getDocComment());
+
+                $positioning = array();
+                foreach ($global['clause'] as $key => $item) {
+                    $positioning[$global['clause'][$key]] = $global['command'][$key];
                 }
 
-                $dumper = new NodeDumper();
-                echo $dumper->dump($ast) . "\n";
+                $statement = $this->PDO->prepare("CREATE DATABASE IF NOT EXISTS {$dbName};");
+                $statement->execute();
+
+                $primary = false;
+                $tablesql = "CREATE TABLE IF NOT EXISTS {$positioning['Table']} ( \n";
+                foreach ($pdc->getProperties() as $prop) {
+                    $column = $this->PDCParser($prop->getDocComment());
+                    $col = isset($column['command'][0]) ? $column['command'][0] : '';
+                    $attr = isset($column['value'][0]) ? $column['value'][0] : '';
+                    $cmd = isset($column['command'][0]) ? $column['command'][0] : '';
+
+                    if ($col !== '' && $attr !== '') {
+                        $tablesql .= "{$col} {$attr}, \n";
+                    }
+
+                    if ($positioning['PrimaryKey'] === $cmd) {
+                        $primary = true;
+                    }
+                }
+                if ($primary) {
+                    $tablesql .= "PRIMARY KEY ({$positioning['PrimaryKey']}) \n";
+                }
+                $tablesql .= ")";
+
+                var_dump($tablesql);
             }
         }
+    }
 
-        /*
-        try {
-            $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
-            $dbi = new PDO($pdoConnection, $user, $pass);
-            $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    /**
+     * @param $raw_docs
+     * returned from controller
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function PDCParser($raw_docs)
+    {
+        $data = array();
+        preg_match_all('(#[ a-zA-Z0-9-:.+()/_\\\@]+)', $raw_docs, $result, PREG_PATTERN_ORDER);
+        if (count($result[0]) > 0) {
+            foreach ($result[0] as $key => $value) {
 
+                $preg = explode(' ', $value);
 
+                $data['clause'][$key] = str_replace('#', '', $preg[0]);
+                $data['command'][$key] = $preg[1];
 
+                $data['value'][$key] = '';
 
-            $this->query = "CREATE TABLE %s (";
-
-            $this->query .= ");";
-
-            return $dbi;
-        } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect."));
+                foreach ($preg as $k => $v) {
+                    switch ($k) {
+                        case 0:
+                            break;
+                        case 1:
+                            break;
+                        default:
+                            if ($k !== sizeof($preg) - 1) {
+                                $data['value'][$key] .= $v . ' ';
+                            } else {
+                                $data['value'][$key] .= $v;
+                            }
+                            break;
+                    }
+                }
+            }
         }
-        */
+        return $data;
     }
 
     public function __toString()
