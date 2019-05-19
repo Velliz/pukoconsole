@@ -168,7 +168,7 @@ class Database
 
                 $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
                 $property = str_replace('{{field}}', $v['Field'], $property);
-                $property = str_replace('{{type}}', $v['Type'], $property);
+                $property = str_replace('{{type}}', "{$v['Type']} {$v['Extra']}", $property);
                 $property = str_replace('{{value}}', $initValue, $property);
             }
 
@@ -264,7 +264,10 @@ class Database
     public function SetupMySQL($host, $port, $dbName, $user, $pass)
     {
         try {
-            $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
+            $pdoConnection = "mysql:host=$host;port=$port;";
+            if (strlen($dbName) > 0) {
+                $pdoConnection = "mysql:host=$host;port=$port;dbname=$dbName";
+            }
             $dbi = new PDO($pdoConnection, $user, $pass);
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -313,7 +316,7 @@ class Database
         if (strlen($dbName) === 0) {
             throw new Exception('Database connection setup required.');
         }
-        $this->PDO = $this->SetupMySQL($host, $port, $dbName, $user, $pass);
+        $this->PDO = $this->SetupMySQL($host, $port, '', $user, $pass);
 
         $fileList = scandir($root . '/plugins/model');
         foreach ($fileList as $file) {
@@ -331,6 +334,8 @@ class Database
                 }
 
                 $statement = $this->PDO->prepare("CREATE DATABASE IF NOT EXISTS {$dbName};");
+                $statement->execute();
+                $statement = $this->PDO->prepare("USE {$dbName};");
                 $statement->execute();
 
                 $primary = false;
@@ -354,7 +359,10 @@ class Database
                 }
                 $tablesql .= ")";
 
-                var_dump($tablesql);
+                echo Echos::Prints(sprintf("Generating model %s.php", $positioning['Table']), false);
+
+                $statement = $this->PDO->prepare($tablesql);
+                $statement->execute();
             }
         }
     }
