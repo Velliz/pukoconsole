@@ -273,10 +273,12 @@ class Database
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             if (strlen($dbName) > 0) {
-                $this->query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-                WHERE TABLE_NAME LIKE '%' AND TABLE_SCHEMA = '{$dbName}'";
+                $this->query = "SELECT TABLE_NAME, TABLE_TYPE, ENGINE
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_SCHEMA = '{$dbName}'
+                AND TABLE_TYPE = 'BASE TABLE'
+                ORDER BY TABLE_TYPE ASC;";
             }
-
             return $dbi;
         } catch (Exception $ex) {
             die(Echos::Prints("Failed to connect."));
