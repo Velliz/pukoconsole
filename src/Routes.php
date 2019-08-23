@@ -190,7 +190,9 @@ class Routes
 
         if (!file_exists($path)) {
             if (strpos($namespace, '/') !== false) {
-                mkdir($dir);
+                if (!is_dir($dir)) {
+                    mkdir($dir);
+                }
             }
             $ctrl = file_get_contents(__DIR__ . "/template/controller/{$kind}");
             $ctrl = str_replace("{{namespace}}", Routes::StringReplaceBackSlash($namespace), $ctrl);

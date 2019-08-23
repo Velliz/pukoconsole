@@ -17,6 +17,8 @@ class Models
 
     private $name;
 
+    private $schema;
+
     private $data_type = array(
         'int',
         'longtext',
@@ -45,11 +47,12 @@ class Models
         'enum',
     );
 
-    public function __construct($root, $act, $model_name)
+    public function __construct($root, $act, $model_name, $schema)
     {
+        $this->schema = $schema;
         switch ($act) {
             case 'add':
-                $this->add($root, $model_name);
+                $this->add($root, $model_name, $schema);
                 break;
             case 'update':
 
@@ -63,12 +66,12 @@ class Models
         }
     }
 
-    public function add($root, $model_name)
+    public function add($root, $model_name, $schema)
     {
         if (empty($model_name)) {
             die(Echos::Prints('Model name required!'));
         }
-        if (file_exists($root . "/plugins/model/" . $this->name . ".php")) {
+        if (file_exists($root . "/plugins/model/{$schema}/{$this->name}.php")) {
             die(Echos::Prints('Model already exists! Please update instead creating new one.'));
         }
 
@@ -138,21 +141,22 @@ class Models
         $model_file = str_replace('{{table}}', $this->name, $model_file);
         $model_file = str_replace('{{primary}}', $primary, $model_file);
         $model_file = str_replace('{{variables}}', $property, $model_file);
+        $model_file = str_replace('{{schema}}', $schema, $model_file);
 
-        if (!is_dir("{$root}/plugins/model")) {
-            mkdir("{$root}/plugins/model");
+        if (!is_dir("{$root}/plugins/model/{$schema}")) {
+            mkdir("{$root}/plugins/model/{$schema}");
         }
-        file_put_contents($root . "/plugins/model/" . $this->name . ".php", $model_file);
+        file_put_contents($root . "/plugins/model/{$schema}/{$this->name}.php", $model_file);
 
         //region generate model test classes
         $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
         $test_file = str_replace('{{table}}', $this->name, $test_file);
 
-        if (!is_dir("{$root}/tests/unit/model")) {
-            mkdir("{$root}/tests/unit/model");
+        if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
+            mkdir("{$root}/tests/unit/model/{$schema}");
         }
-        if (!file_exists("{$root}/tests/unit/model/{$this->name}ModelTest.php")) {
-            file_put_contents("{$root}/tests/unit/model/{$this->name}ModelTest.php", $test_file);
+        if (!file_exists("{$root}/tests/unit/model/{$schema}/{$this->name}ModelTest.php")) {
+            file_put_contents("{$root}/tests/unit/model/{$schema}/{$this->name}ModelTest.php", $test_file);
         }
 
         $keyval = "";
@@ -181,11 +185,11 @@ class Models
         $test_file = str_replace('{{table}}', $this->name, $test_file);
         $test_file = str_replace('{{data}}', $destruct, $test_file);
 
-        if (!is_dir("{$root}/tests/unit/controller")) {
-            mkdir("{$root}/tests/unit/controller");
+        if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
+            mkdir("{$root}/tests/unit/controller/{$schema}");
         }
-        if (!file_exists("{$root}/tests/unit/controller/{$this->name}ControllerTest.php")) {
-            file_put_contents("{$root}/tests/unit/controller/{$this->name}ControllerTest.php", $test_file);
+        if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$this->name}ControllerTest.php")) {
+            file_put_contents("{$root}/tests/unit/controller/{$schema}/{$this->name}ControllerTest.php", $test_file);
         }
         //end region generate model test classes
     }

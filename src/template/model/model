@@ -1,6 +1,6 @@
 <?php
 
-namespace plugins\model;
+namespace plugins\model\{{schema}};
 
 use pukoframework\pda\DBI;
 use pukoframework\pda\Model;

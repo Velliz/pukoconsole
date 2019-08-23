@@ -84,10 +84,10 @@ class Database
             $configuration[$schema] = $cf;
 
             if ($kinds === 'setup') {
-                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass);
+                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
             if ($kinds === 'generate') {
-                $this->Generate($root, $db, $host, $port, $dbName, $user, $pass);
+                $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
 
             $more = Input::Read('Tambahkan koneksi lain? (y/n)');
@@ -109,7 +109,7 @@ class Database
 
     }
 
-    public function Setup($root, $db, $host, $port, $dbName, $user, $pass)
+    public function Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema)
     {
         switch ($db) {
             case 'mysql':
@@ -133,7 +133,7 @@ class Database
 
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $val) {
 
-            echo Echos::Prints(sprintf("Creating model %s.php", $val['TABLE_NAME']), false);
+            echo Echos::Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
 
             $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
             $statement->execute();
@@ -177,21 +177,22 @@ class Database
             $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
+            $model_file = str_replace('{{schema}}', $schema, $model_file);
 
-            if (!is_dir("{$root}/plugins/model")) {
-                mkdir("{$root}/plugins/model");
+            if (!is_dir("{$root}/plugins/model/{$schema}")) {
+                mkdir("{$root}/plugins/model/{$schema}");
             }
-            file_put_contents($root . "/plugins/model/" . $val['TABLE_NAME'] . ".php", $model_file);
+            file_put_contents($root . "/plugins/model/{$schema}/{$val['TABLE_NAME']}.php", $model_file);
 
             //region generate model test classes
             $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
             $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
 
-            if (!is_dir("{$root}/tests/unit/model")) {
-                mkdir("{$root}/tests/unit/model");
+            if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
+                mkdir("{$root}/tests/unit/model/{$schema}");
             }
-            if (!file_exists("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php")) {
-                file_put_contents("{$root}/tests/unit/model/{$val['TABLE_NAME']}ModelTest.php", $test_file);
+            if (!file_exists("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php")) {
+                file_put_contents("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php", $test_file);
             }
 
             $keyval = "";
@@ -214,11 +215,11 @@ class Database
             $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
             $test_file = str_replace('{{data}}', $destruct, $test_file);
 
-            if (!is_dir("{$root}/tests/unit/controller")) {
-                mkdir("{$root}/tests/unit/controller");
+            if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
+                mkdir("{$root}/tests/unit/controller/{$schema}");
             }
-            if (!file_exists("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php")) {
-                file_put_contents("{$root}/tests/unit/controller/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
+            if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php")) {
+                file_put_contents("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
             }
             //end region generate model test classes
         }
@@ -234,7 +235,7 @@ class Database
      * @param $pass
      * @throws \ReflectionException
      */
-    public function Generate($root, $db, $host, $port, $dbName, $user, $pass)
+    public function Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema)
     {
         switch ($db) {
             case 'mysql':

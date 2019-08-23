@@ -20,7 +20,8 @@
   ],
   "require": {
     "php": ">=7.0",
-    "nikic/php-parser": "v4.2.0"
+    "nikic/php-parser": "v4.2.0",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
