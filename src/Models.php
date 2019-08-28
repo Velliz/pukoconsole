@@ -144,7 +144,7 @@ class Models
         $model_file = str_replace('{{schema}}', $schema, $model_file);
 
         if (!is_dir("{$root}/plugins/model/{$schema}")) {
-            mkdir("{$root}/plugins/model/{$schema}");
+            mkdir("{$root}/plugins/model/{$schema}", 0777, true);
         }
         file_put_contents($root . "/plugins/model/{$schema}/{$this->name}.php", $model_file);
 
@@ -153,7 +153,7 @@ class Models
         $test_file = str_replace('{{table}}', $this->name, $test_file);
 
         if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
-            mkdir("{$root}/tests/unit/model/{$schema}");
+            mkdir("{$root}/tests/unit/model/{$schema}", 0777, true);
         }
         if (!file_exists("{$root}/tests/unit/model/{$schema}/{$this->name}ModelTest.php")) {
             file_put_contents("{$root}/tests/unit/model/{$schema}/{$this->name}ModelTest.php", $test_file);
@@ -186,7 +186,7 @@ class Models
         $test_file = str_replace('{{data}}', $destruct, $test_file);
 
         if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
-            mkdir("{$root}/tests/unit/controller/{$schema}");
+            mkdir("{$root}/tests/unit/controller/{$schema}", 0777, true);
         }
         if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$this->name}ControllerTest.php")) {
             file_put_contents("{$root}/tests/unit/controller/{$schema}/{$this->name}ControllerTest.php", $test_file);

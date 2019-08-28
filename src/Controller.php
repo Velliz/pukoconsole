@@ -49,7 +49,7 @@ class Controller
         $template = str_replace('{{namespace}}', 'plugins\controller', $template);
         $template = str_replace('{{class}}', $value, $template);
         if (!is_dir("{$root}/plugins/controller")) {
-            mkdir("{$root}/plugins/controller");
+            mkdir("{$root}/plugins/controller", 0777, true);
         }
         file_put_contents("{$root}/plugins/controller/{$value}.php", $template);
     }

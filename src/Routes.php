@@ -191,7 +191,7 @@ class Routes
         if (!file_exists($path)) {
             if (strpos($namespace, '/') !== false) {
                 if (!is_dir($dir)) {
-                    mkdir($dir);
+                    mkdir($dir, 0777, true);
                 }
             }
             $ctrl = file_get_contents(__DIR__ . "/template/controller/{$kind}");
@@ -217,7 +217,7 @@ class Routes
         foreach ($this->lang as $key => $val) {
             $ctrl = "{$this->root}/assets/html/{$val}/{$controller}";
             if (!is_dir($ctrl)) {
-                mkdir($ctrl);
+                mkdir($ctrl, 0777, true);
             }
             $html = file_get_contents(__DIR__ . "/template/assets/html");
             $fname = "{$this->root}/assets/html/{$val}/{$controller}/{$function}.html";

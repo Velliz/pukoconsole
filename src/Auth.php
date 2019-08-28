@@ -38,7 +38,7 @@ class Auth
 
         $template = str_replace('{{class}}', $value, $template);
         if (!is_dir($root . '/plugins/auth')) {
-            mkdir($root . '/plugins/auth');
+            mkdir($root . '/plugins/auth', 0777, true);
         }
 
         file_put_contents($root . "/plugins/auth/{$value}.php", $template);

@@ -60,7 +60,7 @@ class Elements
         $element = str_replace('{{class}}', $type, $element);
 
         if (!is_dir("{$root}/plugins/elements/{$ltype}")) {
-            mkdir("{$root}/plugins/elements/{$ltype}");
+            mkdir("{$root}/plugins/elements/{$ltype}", 0777, true);
         }
         if (!file_exists("/plugins/elements/{$ltype}/{$type}.php")) {
             file_put_contents("{$root}/plugins/elements/{$ltype}/{$type}.php", $element);
@@ -98,7 +98,7 @@ class Elements
         $data = json_decode($this->download($url), true);
 
         if (!is_dir("{$root}/plugins/elements/{$ltype}")) {
-            mkdir("{$root}/plugins/elements/{$ltype}");
+            mkdir("{$root}/plugins/elements/{$ltype}", 0777, true);
         }
 
         foreach ($data as $single) {

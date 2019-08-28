@@ -180,7 +180,7 @@ class Database
             $model_file = str_replace('{{schema}}', $schema, $model_file);
 
             if (!is_dir("{$root}/plugins/model/{$schema}")) {
-                mkdir("{$root}/plugins/model/{$schema}");
+                mkdir("{$root}/plugins/model/{$schema}", 0777, true);
             }
             file_put_contents($root . "/plugins/model/{$schema}/{$val['TABLE_NAME']}.php", $model_file);
 
@@ -189,7 +189,7 @@ class Database
             $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
 
             if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
-                mkdir("{$root}/tests/unit/model/{$schema}");
+                mkdir("{$root}/tests/unit/model/{$schema}", 0777, true);
             }
             if (!file_exists("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php")) {
                 file_put_contents("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php", $test_file);
@@ -216,7 +216,7 @@ class Database
             $test_file = str_replace('{{data}}', $destruct, $test_file);
 
             if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
-                mkdir("{$root}/tests/unit/controller/{$schema}");
+                mkdir("{$root}/tests/unit/controller/{$schema}", 0777, true);
             }
             if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php")) {
                 file_put_contents("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
