@@ -2,11 +2,12 @@
 
 namespace {{namespace}};
 
-use pukoframework\middleware\{{type}};
+use pukoframework\middleware\Console;
 
-class {{classname}} extends {{type}}
+/**
+ * #Template html false
+ */
+class {{class}} extends Console
 {
-
-    public function {{function}}(){}
 
 }
