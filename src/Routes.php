@@ -56,7 +56,7 @@ class Routes
 
         $this->routes = include "{$root}/config/routes.php";
 
-        if (in_array($this->directive, array('view', 'service'))) {
+        if (in_array($this->directive, array('view', 'service', 'console'))) {
             $this->structure($this->routes['router']);
         } else if (in_array($this->directive, array('error', 'lost'))) {
             $this->errorOrLost($this->directive);

@@ -23,6 +23,9 @@ tests    Start unit testing (preview)
 element  Generate or download view element (beta)
          <name> [add/download]
          
+cli      Execute code directly from console
+         <router path>
+         
 help     Show help menu
 
 version  Show console version

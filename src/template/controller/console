@@ -1,0 +1,12 @@
+<?php
+
+namespace {{namespace}};
+
+use pukoframework\middleware\{{type}};
+
+class {{classname}} extends {{type}}
+{
+
+    public function {{function}}(){}
+
+}

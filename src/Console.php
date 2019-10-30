@@ -99,6 +99,9 @@ class Console
             case 'help':
                 return $this->Help();
                 break;
+            case 'cli':
+                return new Cli($this->GetCommand(Console::DIRECTIVE));
+                break;
             case 'generate':
                 return $this->Generate($this->GetCommand(Console::DIRECTIVE));
                 break;
