@@ -239,7 +239,7 @@ class Database
     {
         switch ($db) {
             case 'mysql':
-                $this->GenerateMySQL($root, $host, $port, $dbName, $user, $pass);
+                $this->GenerateMySQL($root, $host, $port, $dbName, $user, $pass, $schema);
                 break;
             case 'oracle':
                 //$this->GenerateOracle($host, $port, $dbName, $user, $pass);
@@ -315,18 +315,18 @@ class Database
      * @throws \ReflectionException
      * @throws Exception
      */
-    public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass)
+    public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass, $schema)
     {
         if (strlen($dbName) === 0) {
             throw new Exception('Database connection setup required.');
         }
         $this->PDO = $this->SetupMySQL($host, $port, '', $user, $pass);
 
-        $fileList = scandir($root . '/plugins/model');
+        $fileList = scandir($root . '/plugins/model/' . $schema);
         foreach ($fileList as $file) {
             if (in_array('php', explode('.', $file))) {
                 $file = explode('.', $file);
-                $model = '\\plugins\\model\\' . $file[0];
+                $model = '\\plugins\\model\\' . $schema . '\\' . $file[0];
                 $object = new $model;
 
                 $pdc = new ReflectionClass($object);

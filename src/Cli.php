@@ -25,7 +25,7 @@ class Cli
 
         echo Echos::Prints("Puko project initialized at cli");
         echo Echos::Prints("Press (Ctrl + C) to stop.");
-        echo exec("php cli.php {$command}");
+        echo exec("php cli {$command}");
 
         return true;
     }
