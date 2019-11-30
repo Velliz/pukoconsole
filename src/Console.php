@@ -162,7 +162,8 @@ class Console
                 return new Models(
                     $this->root,
                     $this->GetCommand(Console::ACTION),
-                    $this->GetCommand(Console::ATTRIBUTE)
+                    $this->GetCommand(Console::ATTRIBUTE),
+                    $this->GetCommand(Console::EPHEMERAL)
                 );
             default:
                 return Echos::Prints("Setup exited with no process executed!");
