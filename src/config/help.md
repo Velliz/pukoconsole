@@ -9,7 +9,7 @@ setup    Setup puko framework installation
          [model] [add/update/remove] [name] [schema]
          
 routes   Setup puko framework routes
-         [view/service/list/error/lost] [add/update/delete] [url]
+         [view/service/console/list/error/lost] [add/update/delete] [url]
 
 generate Auto generate service
          [db]

@@ -2,7 +2,7 @@
   "name": "puko/console",
   "description": "Advanced console util that make pukoframework get things done on the fly",
   "type": "library",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "authors": [
     {
