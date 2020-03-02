@@ -4,6 +4,7 @@
     'identifier'  => "{{identifier}}",
     'cookies'     => "{{cookies}}",
     'session'     => "{{session}}",
+    'expired'     => "{{expired}}",
     'expiredText' => "{{expiredText}}",
     'errorText'   => "{{errorText}}",
 ];
