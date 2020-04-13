@@ -54,7 +54,7 @@ class Elements
         $ltype = strtolower($type);
 
         $element = file_get_contents(__DIR__ . "/template/plugins/elements");
-        $path = '\pukoframework\Framework::$factory->getRoot()' . " . {$type}::class . '.html'";
+        $path = 'Framework::$factory->getRoot()' . " . '/' . {$type}::class . '.html'";
         $element = str_replace('{{path}}', $path, $element);
         $element = str_replace('{{namespaces}}', $ltype, $element);
         $element = str_replace('{{class}}', $type, $element);
