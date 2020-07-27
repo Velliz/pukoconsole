@@ -179,9 +179,12 @@ class Console
         return file_get_contents(__DIR__ . "/config/help.md");
     }
 
+    /**
+     * @return string
+     */
     public function NotFound()
     {
-        return "Command bot found!";
+        return Echos::Prints("Command not found!");
     }
 
     /**

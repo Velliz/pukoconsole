@@ -85,15 +85,23 @@ class Routes
         }
     }
 
+    /**
+     * @param $segment
+     * @return string
+     */
     public function add($segment)
     {
         if (isset($segment[$this->attribute])) {
             die(Echos::Prints("Routes already registered!"));
         }
 
-        $controller = Input::Read('Controller name (separate directory with \ key)');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
         $function = Input::Read('Function name');
-        $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
+        if ($this->directive === 'console') {
+            $accept = 'get';
+        } else {
+            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+        }
 
         $data = [
             "controller" => $controller,
@@ -133,15 +141,23 @@ class Routes
         return Echos::Prints("Routes {$cNamespaces} {$function} added.");
     }
 
+    /**
+     * @param $segment
+     * @return string
+     */
     public function update($segment)
     {
         if (!isset($segment[$this->attribute])) {
             die(Echos::Prints("Routes is not registered! Add them first."));
         }
 
-        $controller = Input::Read('Controller name (separate directory with \ key)');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
         $function = Input::Read('Function name');
-        $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
+        if ($this->directive === 'console') {
+            $accept = 'get';
+        } else {
+            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+        }
 
         $data = [
             "controller" => $controller,
@@ -225,11 +241,18 @@ class Routes
         }
     }
 
+    /**
+     * @param $type
+     */
     public function errorOrLost($type)
     {
-        $controller = Input::Read('Controller name (separate directory with \ key)');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
         $function = Input::Read('Function name');
-        $accept = Input::Read('Accept [GET,POST, PUT, PATCH, DELETE, OPTIONS] separated by comma');
+        if ($this->directive === 'console') {
+            $accept = 'get';
+        } else {
+            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+        }
 
         $data = [
             "controller" => $controller,
