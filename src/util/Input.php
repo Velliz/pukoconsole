@@ -19,7 +19,7 @@ trait Input
         echo sprintf('%s :', $variable);
 
         if (!$trim) {
-            return fgets(STDIN);
+            return str_replace("\r\n", '', fgets(STDIN));
         }
         return preg_replace('/\s+/', '', fgets(STDIN));
     }
