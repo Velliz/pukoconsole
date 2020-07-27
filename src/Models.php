@@ -55,10 +55,7 @@ class Models
                 $this->add($root, $model_name, $schema);
                 break;
             case 'update':
-
-                break;
             case 'remove':
-
                 break;
             default:
                 die(Echos::Prints('Command not valid!'));

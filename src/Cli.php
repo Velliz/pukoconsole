@@ -30,6 +30,9 @@ class Cli
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return Echos::Prints("Console is finished running!");

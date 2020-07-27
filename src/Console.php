@@ -109,7 +109,7 @@ class Console
                 return $this;
                 break;
             default:
-                return $this->Help();
+                return $this->NotFound();
                 break;
         }
     }
@@ -171,10 +171,17 @@ class Console
         }
     }
 
+    /**
+     * @return false|string
+     */
     public function Help()
     {
-        $help = file_get_contents(__DIR__ . "/config/help.md");
-        return $help;
+        return file_get_contents(__DIR__ . "/config/help.md");
+    }
+
+    public function NotFound()
+    {
+        return "Command bot found!";
     }
 
     /**

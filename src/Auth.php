@@ -24,6 +24,11 @@ class Auth
 
     var $value = '';
 
+    /**
+     * Auth constructor.
+     * @param $root
+     * @param $value
+     */
     public function __construct($root, $value)
     {
         if ($value === null) {

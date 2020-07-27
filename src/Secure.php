@@ -22,9 +22,9 @@ class Secure
         $key = Input::Read("Secure key");
         $cookies = Input::Read("Cookies name");
         $session = Input::Read("Session name");
-        $expired = Input::Read("Session expired number (in days)");
-        $expiredText = Input::Read("Session expired display text");
-        $error = Input::Read("Error display text");
+        $expired = Input::Read("Session expired number (in days) or blank for infinity");
+        $expiredText = Input::Read("Session expired display text", false);
+        $error = Input::Read("Error display text", false);
 
         $configuration = file_get_contents(__DIR__ . "/template/config/encryption");
 

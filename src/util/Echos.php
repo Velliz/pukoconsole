@@ -9,6 +9,11 @@ namespace pukoconsole\util;
 trait Echos
 {
 
+    /**
+     * @param $var
+     * @param bool $break
+     * @return string
+     */
     public static function Prints($var, $break = true)
     {
         if ($break) {

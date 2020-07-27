@@ -1,14 +1,14 @@
 
 -- Puko Framework Console --
 
-setup    Setup puko framework installation
+setup    Installation
          [db]
          [secure]
          [auth] [name]
          [controller] [view/service] [name]
          [model] [add/update/remove] [name] [schema]
          
-routes   Setup puko framework routes
+routes   Routing
          [view/service/console/list/error/lost] [add/update/delete] [url]
 
 generate Auto generate service

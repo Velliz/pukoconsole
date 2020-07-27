@@ -17,8 +17,9 @@ class {{class}} extends Parts
      * @throws PteException
      */
     public function Parse($data = null, $template = '', $templateBinary = false) {
+        $file = str_replace('\\', '/', {{class}}::class);
         $this->pte->SetValue($this->data);
-        $this->pte->SetHtml({{path}});
+        $this->pte->SetHtml(Framework::$factory->getRoot() . "/{$file}.html");
         return $this->pte->Output();
     }
 

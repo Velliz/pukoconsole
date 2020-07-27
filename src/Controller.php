@@ -20,12 +20,24 @@ use pukoconsole\util\Echos;
 class Controller
 {
 
+    /**
+     * @var string
+     */
     var $action;
 
+    /**
+     * @var string
+     */
     var $value;
 
     use Echos;
 
+    /**
+     * Controller constructor.
+     * @param $root
+     * @param $action
+     * @param $value
+     */
     public function __construct($root, $action, $value)
     {
         $template = null;
@@ -54,6 +66,9 @@ class Controller
         file_put_contents("{$root}/plugins/controller/{$value}.php", $template);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return Echos::Prints("{$this->action} controller {$this->value} created!");

@@ -42,7 +42,7 @@ class Database
      * @param $kinds
      * @throws \ReflectionException
      */
-    public function __construct($root = null, $kinds)
+    public function __construct($root, $kinds)
     {
         if ($root === null) {
             die(Echos::Prints('Base url required'));
@@ -109,6 +109,16 @@ class Database
 
     }
 
+    /**
+     * @param $root
+     * @param $db
+     * @param $host
+     * @param $port
+     * @param $dbName
+     * @param $user
+     * @param $pass
+     * @param $schema
+     */
     public function Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema)
     {
         switch ($db) {
@@ -395,7 +405,6 @@ class Database
                 foreach ($preg as $k => $v) {
                     switch ($k) {
                         case 0:
-                            break;
                         case 1:
                             break;
                         default:
