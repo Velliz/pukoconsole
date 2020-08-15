@@ -152,12 +152,12 @@ class Database
             $property = "";
             $primary = "";
 
-            $field = [];
+            $fieldlist = [];
             $data = [];
 
             foreach ($column as $k => $v) {
                 $initValue = 'null';
-                $field[] = $v['Field'];
+                $fieldlist[] = strtolower($v['Field']);
 
                 if ($v['Key'] === 'PRI') {
                     $primary = $v['Field'];
@@ -235,15 +235,15 @@ class Database
             }
             //end region generate model test classes
 
-            $contracts_file = file_get_contents(__DIR__ . "/template/controller/model_contract");
+            $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract");
             $contracts_file = str_replace('{{table}}', $val['TABLE_NAME'], $contracts_file);
             $contracts_file = str_replace('{{schema}}', $schema, $contracts_file);
             $contracts_file = str_replace('{{primary}}', $primary, $contracts_file);
             $contracts_file = str_replace('{{primary-conditions}}', "$primary = @1", $contracts_file);
             $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
 
-            $contracts_file = str_replace('{{column}}', implode(', ', $field), $contracts_file);
-            $contracts_file = str_replace('{{table-specs}}', implode(', ', $field), $contracts_file);
+            $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist), $contracts_file);
+            $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist) . '"', $contracts_file);
 
             if (!is_dir("{$root}/model/{$schema}")) {
                 mkdir("{$root}/model/{$schema}", 0777, true);

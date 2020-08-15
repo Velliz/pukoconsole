@@ -27,13 +27,13 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     {
         $sql = "SELECT {{column}}
                 FROM {{table}}
-                WHERE {{conditions}} {{primary-conditions}}";
+                WHERE {{conditions}} AND {{primary-conditions}}";
         return DBI::Prepare($sql)->FirstRow($id);
     }
 
     public static function IsExists($id)
     {
-        $sql = "SELECT id FROM {{table}} WHERE {{conditions}} {{primary-conditions}};";
+        $sql = "SELECT id FROM {{table}} WHERE {{conditions}} AND {{primary-conditions}};";
         $data = DBI::Prepare($sql)->GetData($id);
         if (sizeof($data) > 0) {
             return true;
