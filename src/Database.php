@@ -152,10 +152,12 @@ class Database
             $property = "";
             $primary = "";
 
+            $field = [];
             $data = [];
 
             foreach ($column as $k => $v) {
                 $initValue = 'null';
+                $field[] = $v['Field'];
 
                 if ($v['Key'] === 'PRI') {
                     $primary = $v['Field'];
@@ -240,8 +242,8 @@ class Database
             $contracts_file = str_replace('{{primary-conditions}}', "$primary = @1", $contracts_file);
             $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
 
-            $contracts_file = str_replace('{{column}}', implode(', ', $column), $contracts_file);
-            $contracts_file = str_replace('{{table-specs}}', implode(', ', $column), $contracts_file);
+            $contracts_file = str_replace('{{column}}', implode(', ', $field), $contracts_file);
+            $contracts_file = str_replace('{{table-specs}}', implode(', ', $field), $contracts_file);
 
             if (!is_dir("{$root}/model/{$schema}")) {
                 mkdir("{$root}/model/{$schema}", 0777, true);
