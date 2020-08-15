@@ -95,7 +95,7 @@ class Routes
             die(Echos::Prints("Routes already registered!"));
         }
 
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
         $function = Input::Read('Function name');
         if ($this->directive === 'console') {
             $accept = 'get';
@@ -151,7 +151,7 @@ class Routes
             die(Echos::Prints("Routes is not registered! Add them first."));
         }
 
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
         $function = Input::Read('Function name');
         if ($this->directive === 'console') {
             $accept = 'get';
@@ -246,7 +246,7 @@ class Routes
      */
     public function errorOrLost($type)
     {
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex: entities\\reports');
+        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
         $function = Input::Read('Function name');
         if ($this->directive === 'console') {
             $accept = 'get';
