@@ -184,7 +184,7 @@ class Console
      */
     public function NotFound()
     {
-        return Echos::Prints("Command not found!");
+        return Echos::Prints("Command not found! Access help: 'php puko help'");
     }
 
     /**

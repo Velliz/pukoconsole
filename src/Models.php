@@ -191,9 +191,16 @@ class Models
         //end region generate model test classes
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return Echos::Prints("Model {$this->name}.php created!");
+        return Echos::Prints(
+            "plugins/model/{$this->schema}/{$this->name}.php 
+                | tests/unit/model/{$this->schema}/{$this->name}ModelTest.php 
+                | tests/unit/controller/{$this->schema}/{$this->name}ControllerTest.php 
+                created!");
     }
 
 }
