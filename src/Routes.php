@@ -79,6 +79,9 @@ class Routes
             case 'remove':
                 $this->remove();
                 break;
+            case 'crud':
+                $this->crud($pages);
+                break;
             default:
                 die(Echos::Prints('Command not supported'));
                 break;
@@ -174,6 +177,9 @@ class Routes
         return Echos::Prints("Routes {$function} modified.");
     }
 
+    /**
+     * @param array $routes
+     */
     public function lists($routes = array())
     {
         $count = count($routes);
@@ -187,6 +193,11 @@ class Routes
     public function remove()
     {
         die(Echos::Prints('To risky. Please delete them manually.'));
+    }
+
+    public function crud($segment)
+    {
+
     }
 
     public function ProcessController($namespace, $class, $function, $kind)

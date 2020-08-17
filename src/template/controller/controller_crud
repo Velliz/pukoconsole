@@ -1,0 +1,202 @@
+<?php
+
+namespace controller\api;
+
+use DateTime;
+use Exception;
+use model\UserModel;
+use plugins\UserBearerData;
+use pukoframework\middleware\Service;
+use pukoframework\Request;
+
+/**
+ * #Template html false
+ */
+class users extends Service
+{
+
+    use UserBearerData;
+
+
+    /**
+     * @throws Exception
+     */
+    public function create()
+    {
+        $param = Request::JsonBody();
+
+        //empty check
+        if ($param['fullname'] === '') {
+            throw new Exception($this->say('NAME_REQUIRED'));
+        }
+        if ($param['phonenumber'] === '') {
+            throw new Exception($this->say('PHONE_REQUIRED'));
+        }
+        if ($param['birthday'] === '') {
+            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
+        }
+        if ($param['alias'] === '') {
+            throw new Exception($this->say('ALIAS_REQUIRED'));
+        }
+
+        //validations
+        $birthday = DateTime::createFromFormat('d/m/Y', $param['birthday']);
+        if (!$birthday instanceof DateTime) {
+            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
+        }
+        if (sizeof(UserModel::SearchData(['u.alias' => $param['alias']])) > 0) {
+            throw new Exception($this->say('ALIAS_UNIQUE', [$param['alias']]));
+        }
+
+        //insert
+        $user = new \plugins\model\primary\users();
+        $user->created = $this->GetServerDateTime();
+        $user->cuid = $this->user['id'];
+
+        $user->fullname = $param['fullname'];
+        $user->phonenumber = $param['phonenumber'];
+        $user->birthday = $birthday;
+        $user->alias = $param['alias'];
+
+        $user->save();
+
+        //response
+        $data['user'] = [
+            'id' => $user->id,
+            'fullname' => $user->fullname,
+            'phonenumber' => $user->phonenumber,
+            'birthday' => $param['birthday'],
+            'alias' => $user->alias,
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @param string $id2
+     * @return mixed
+     * @throws Exception
+     */
+    public function update($id2 = '')
+    {
+        $param = Request::JsonBody();
+
+        //empty check
+        if ($param['fullname'] === '') {
+            throw new Exception($this->say('NAME_REQUIRED'));
+        }
+        if ($param['phonenumber'] === '') {
+            throw new Exception($this->say('PHONE_REQUIRED'));
+        }
+        if ($param['birthday'] === '') {
+            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
+        }
+        if ($param['alias'] === '') {
+            throw new Exception($this->say('ALIAS_REQUIRED'));
+        }
+
+        //validations
+        $birthday = DateTime::createFromFormat('d/m/Y', $param['birthday']);
+        if (!$birthday instanceof DateTime) {
+            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
+        }
+        if (sizeof(UserModel::SearchData(['u.alias' => $param['alias']])) > 0) {
+            throw new Exception($this->say('ALIAS_UNIQUE', [$param['alias']]));
+        }
+
+        //update
+        $user = new \plugins\model\primary\users($id2);
+        $user->modified = $this->GetServerDateTime();
+        $user->muid = $this->user['id'];
+
+        $user->fullname = $param['fullname'];
+        $user->phonenumber = $param['phonenumber'];
+        $user->birthday = $birthday;
+        $user->alias = $param['alias'];
+
+        $user->modify();
+
+        //response
+        $data['user'] = [
+            'id' => $user->id,
+            'fullname' => $user->fullname,
+            'phonenumber' => $user->phonenumber,
+            'birthday' => $param['birthday'],
+            'alias' => $user->alias,
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @param string $id2
+     * @throws Exception
+     */
+    public function delete($id2 = '')
+    {
+        $user = new \plugins\model\primary\users($id2);
+        $user->modified = $this->GetServerDateTime();
+        $user->muid = $this->user['id'];
+        $user->dflag = 1;
+
+        $user->modify();
+
+        return [
+            'deleted' => true
+        ];
+    }
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function search()
+    {
+        $param = Request::JsonBody();
+        $keyword = [];
+
+        $data['user'] = UserModel::SearchData($keyword);
+        return $data;
+    }
+
+    public function select()
+    {
+    }
+
+    /**
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function table()
+    {
+        return UserModel::GetDataTable([]);
+    }
+
+    /**
+     * @param string $id2
+     * @return mixed
+     * @throws Exception
+     */
+    public function read($id2 = '')
+    {
+        $user = new \plugins\model\primary\users($id2);
+
+        $birthday = DateTime::createFromFormat('Y-m-d H:i:s', $user->birthday);
+        if ($birthday instanceof DateTime) {
+            $birthday = $birthday->format('d/m/Y');
+        } else {
+            $birthday = '';
+        }
+
+        $data['user'] = [
+            'id' => $user->id,
+            'fullname' => $user->fullname,
+            'phonenumber' => $user->phonenumber,
+            'birthday' => $birthday,
+            'alias' => $user->alias,
+        ];
+
+        return $data;
+    }
+
+}
