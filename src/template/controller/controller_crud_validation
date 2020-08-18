@@ -1,0 +1,3 @@
+        if ($param['{{variable}}'] === '') {
+            throw new Exception($this->say('{{ucase_variable}}_REQUIRED'));
+        }

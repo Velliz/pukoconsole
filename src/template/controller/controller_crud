@@ -1,145 +1,84 @@
 <?php
 
-namespace controller\api;
+namespace controller\{{schema}};
 
 use DateTime;
 use Exception;
-use model\UserModel;
-use plugins\UserBearerData;
 use pukoframework\middleware\Service;
 use pukoframework\Request;
 
 /**
  * #Template html false
  */
-class users extends Service
+class {{entity}} extends Service
 {
-
-    use UserBearerData;
-
 
     /**
      * @throws Exception
+     * @auth bearer true
      */
     public function create()
     {
         $param = Request::JsonBody();
 
-        //empty check
-        if ($param['fullname'] === '') {
-            throw new Exception($this->say('NAME_REQUIRED'));
-        }
-        if ($param['phonenumber'] === '') {
-            throw new Exception($this->say('PHONE_REQUIRED'));
-        }
-        if ($param['birthday'] === '') {
-            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
-        }
-        if ($param['alias'] === '') {
-            throw new Exception($this->say('ALIAS_REQUIRED'));
-        }
+        //validations: empty check
+{{validations}}
 
-        //validations
-        $birthday = DateTime::createFromFormat('d/m/Y', $param['birthday']);
-        if (!$birthday instanceof DateTime) {
-            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
-        }
-        if (sizeof(UserModel::SearchData(['u.alias' => $param['alias']])) > 0) {
-            throw new Exception($this->say('ALIAS_UNIQUE', [$param['alias']]));
-        }
+        //validations: customize here
 
         //insert
-        $user = new \plugins\model\primary\users();
-        $user->created = $this->GetServerDateTime();
-        $user->cuid = $this->user['id'];
+        ${{entity}} = new \plugins\model\{{schema}}\{{entity}}();
+{{vars}}
 
-        $user->fullname = $param['fullname'];
-        $user->phonenumber = $param['phonenumber'];
-        $user->birthday = $birthday;
-        $user->alias = $param['alias'];
-
-        $user->save();
+        ${{entity}}->save();
 
         //response
-        $data['user'] = [
-            'id' => $user->id,
-            'fullname' => $user->fullname,
-            'phonenumber' => $user->phonenumber,
-            'birthday' => $param['birthday'],
-            'alias' => $user->alias,
+        $data['{{entity}}'] = [
+    {{responses}}
         ];
 
         return $data;
     }
 
     /**
-     * @param string $id2
+     * @param string $id
      * @return mixed
      * @throws Exception
+     * @auth bearer true
      */
-    public function update($id2 = '')
+    public function update($id = '')
     {
         $param = Request::JsonBody();
 
-        //empty check
-        if ($param['fullname'] === '') {
-            throw new Exception($this->say('NAME_REQUIRED'));
-        }
-        if ($param['phonenumber'] === '') {
-            throw new Exception($this->say('PHONE_REQUIRED'));
-        }
-        if ($param['birthday'] === '') {
-            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
-        }
-        if ($param['alias'] === '') {
-            throw new Exception($this->say('ALIAS_REQUIRED'));
-        }
+        //validations: empty check
+{{validations}}
 
-        //validations
-        $birthday = DateTime::createFromFormat('d/m/Y', $param['birthday']);
-        if (!$birthday instanceof DateTime) {
-            throw new Exception($this->say('BIRTHDAY_REQUIRED'));
-        }
-        if (sizeof(UserModel::SearchData(['u.alias' => $param['alias']])) > 0) {
-            throw new Exception($this->say('ALIAS_UNIQUE', [$param['alias']]));
-        }
+        //validations: customize here
 
         //update
-        $user = new \plugins\model\primary\users($id2);
-        $user->modified = $this->GetServerDateTime();
-        $user->muid = $this->user['id'];
+        ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
+{{vars}}
 
-        $user->fullname = $param['fullname'];
-        $user->phonenumber = $param['phonenumber'];
-        $user->birthday = $birthday;
-        $user->alias = $param['alias'];
-
-        $user->modify();
+        ${{entity}}->modify();
 
         //response
-        $data['user'] = [
-            'id' => $user->id,
-            'fullname' => $user->fullname,
-            'phonenumber' => $user->phonenumber,
-            'birthday' => $param['birthday'],
-            'alias' => $user->alias,
+        $data['{{entity}}'] = [
+    {{responses}}
         ];
 
         return $data;
     }
 
     /**
-     * @param string $id2
+     * @param string $id
      * @throws Exception
+     * @auth bearer true
      */
-    public function delete($id2 = '')
+    public function delete($id = '')
     {
-        $user = new \plugins\model\primary\users($id2);
-        $user->modified = $this->GetServerDateTime();
-        $user->muid = $this->user['id'];
-        $user->dflag = 1;
+        $user = new \plugins\model\{{schema}}\{{entity}}($id);
 
-        $user->modify();
+        //delete logic here
 
         return [
             'deleted' => true
@@ -152,15 +91,13 @@ class users extends Service
      */
     public function search()
     {
-        $param = Request::JsonBody();
         $keyword = [];
 
-        $data['user'] = UserModel::SearchData($keyword);
-        return $data;
-    }
+        $param = Request::JsonBody();
+        //post addition filter here
 
-    public function select()
-    {
+        $data['{{entity}}'] = \model\{{schema}}\{{entity}}Contracts::SearchData($keyword);
+        return $data;
     }
 
     /**
@@ -169,31 +106,25 @@ class users extends Service
      */
     public function table()
     {
-        return UserModel::GetDataTable([]);
+        $keyword = [];
+
+        //post addition filter here
+
+        return \model\{{schema}}\{{entity}}Contracts::GetDataTable($keyword);
     }
 
     /**
-     * @param string $id2
+     * @param string $id
      * @return mixed
      * @throws Exception
      */
-    public function read($id2 = '')
+    public function read($id = '')
     {
-        $user = new \plugins\model\primary\users($id2);
+        ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 
-        $birthday = DateTime::createFromFormat('Y-m-d H:i:s', $user->birthday);
-        if ($birthday instanceof DateTime) {
-            $birthday = $birthday->format('d/m/Y');
-        } else {
-            $birthday = '';
-        }
-
-        $data['user'] = [
-            'id' => $user->id,
-            'fullname' => $user->fullname,
-            'phonenumber' => $user->phonenumber,
-            'birthday' => $birthday,
-            'alias' => $user->alias,
+        //response
+        $data['{{entity}}'] = [
+    {{responses}}
         ];
 
         return $data;

@@ -11,6 +11,8 @@
 
 namespace pukoconsole;
 
+use Exception;
+use ReflectionClass;
 use pukoconsole\util\Commons;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
@@ -197,6 +199,118 @@ class Routes
 
     public function crud($segment)
     {
+        //limit to service only?
+        if ($this->directive !== 'service') {
+            die(Echos::Prints("Aborting! Only applicable to service"));
+        }
+
+        //check if entity is available on the database.
+        $base = explode('/', $this->attribute);
+        $schema = $base[0];
+        $entity = $base[1];
+
+        $routes_new = [];
+        $routes_new["{$entity}/create"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "create",
+            "accept" => ["POST"]
+        ];
+        $routes_new["{$entity}/{?}/update"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "update",
+            "accept" => ["PUT", "POST"]
+        ];
+        $routes_new["{$entity}/{?}/delete"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "delete",
+            "accept" => ["DELETE"]
+        ];
+        $routes_new["{$entity}/table"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "table",
+            "accept" => ["POST"]
+        ];
+        $routes_new["{$entity}/search"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "search",
+            "accept" => ["POST"]
+        ];
+        $routes_new["{$entity}/{?}"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "read",
+            "accept" => ["GET"]
+        ];
+
+        //check if routes exist.
+        foreach ($routes_new as $route => $val) {
+            if (isset($segment[$route])) {
+                die(Echos::Prints("Aborting! Routes '{$route}' already registered!"));
+            }
+        }
+
+        $validations = file_get_contents(__DIR__ . "/template/controller/controller_crud_validation");
+        $vars = file_get_contents(__DIR__ . "/template/controller/controller_crud_vars");
+        $responses = file_get_contents(__DIR__ . "/template/controller/controller_crud_responses");
+
+        $train_validation = $train_vars = $train_responses = "";
+
+        //baca dulu dari model plugins daftar variable yang ada
+        $model = '\\plugins\\model\\' . $schema . '\\' . $entity;
+
+        $object = new $model;
+
+        $pdc = new ReflectionClass($object);
+        foreach ($pdc->getProperties() as $prop) {
+            $column = $this->PDCParser($prop->getDocComment());
+            $col = isset($column['command'][0]) ? $column['command'][0] : '';
+            $attr = isset($column['value'][0]) ? $column['value'][0] : '';
+
+            if ($col !== '' && $attr !== '') {
+                //validations
+                $validation_copy = $validations;
+                $validation_copy = str_replace('{{variable}}', $col, $validation_copy);
+                $validation_copy = str_replace('{{ucase_variable}}', strtoupper($col), $validation_copy);
+                $train_validation .= $validation_copy;
+
+                //vars
+                $vars_copy = $vars;
+                $vars_copy = str_replace('{{entity}}', $entity, $vars_copy);
+                $vars_copy = str_replace('{{variable}}', $col, $vars_copy);
+                $train_vars .= $vars_copy;
+
+                //responses
+                $response_copy = $responses;
+                $response_copy = str_replace('{{entity}}', $entity, $response_copy);
+                $response_copy = str_replace('{{variable}}', $col, $response_copy);
+                $train_responses .= $response_copy;
+            }
+        }
+
+        $crud_file = file_get_contents(__DIR__ . "/template/controller/controller_crud");
+        $crud_file = str_replace('{{schema}}', $schema, $crud_file);
+        $crud_file = str_replace('{{entity}}', $entity, $crud_file);
+        $crud_file = str_replace('{{validations}}', $train_validation, $crud_file);
+        $crud_file = str_replace('{{vars}}', $train_vars, $crud_file);
+        $crud_file = str_replace('{{responses}}', $train_responses, $crud_file);
+
+        if (!is_dir("{$this->root}/controller/{$schema}")) {
+            mkdir("{$this->root}/controller/{$schema}", 0777, true);
+        }
+        if (!file_exists("{$this->root}/controller/{$schema}/{$entity}.php")) {
+            file_put_contents("{$this->root}/controller/{$schema}/{$entity}.php", $crud_file);
+        }
+
+        foreach ($routes_new as $k => $v) {
+            $this->routes['router'][$k] = $v;
+        }
+
+        file_put_contents(
+            "{$this->root}/config/routes.php",
+            '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
+        );
+
+        echo Echos::Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), false);
+
 
     }
 
@@ -291,6 +405,46 @@ class Routes
     public static function StringReplaceBackSlash($string)
     {
         return str_replace("/", "\\", $string);
+    }
+
+    /**
+     * @param $raw_docs
+     * returned from controller
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function PDCParser($raw_docs)
+    {
+        $data = array();
+        preg_match_all('(#[ a-zA-Z0-9-:.,+()/_\\\@]+)', $raw_docs, $result, PREG_PATTERN_ORDER);
+        if (count($result[0]) > 0) {
+            foreach ($result[0] as $key => $value) {
+
+                $preg = explode(' ', $value);
+
+                $data['clause'][$key] = str_replace('#', '', $preg[0]);
+                $data['command'][$key] = $preg[1];
+
+                $data['value'][$key] = '';
+
+                foreach ($preg as $k => $v) {
+                    switch ($k) {
+                        case 0:
+                        case 1:
+                            break;
+                        default:
+                            if ($k !== sizeof($preg) - 1) {
+                                $data['value'][$key] .= $v . ' ';
+                            } else {
+                                $data['value'][$key] .= $v;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
 }

@@ -9,7 +9,7 @@ setup    Installation
          [model] [add/update/remove] [name] [schema]
          
 routes   Routing
-         [view/service/console/list/error/lost] [add/update/delete] [url]
+         [view/service/console/list/error/lost] [add/update/delete/crud] [url]
 
 generate Auto generate service
          [db]
