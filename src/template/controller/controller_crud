@@ -76,7 +76,7 @@ class {{entity}} extends Service
      */
     public function delete($id = '')
     {
-        $user = new \plugins\model\{{schema}}\{{entity}}($id);
+        ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 
         //delete logic here
 
