@@ -86,6 +86,9 @@ class Database
             if ($kinds === 'setup') {
                 $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
+            if ($kinds === 'refresh') {
+                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema);
+            }
             if ($kinds === 'generate') {
                 $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
@@ -96,17 +99,18 @@ class Database
             }
         }
 
-        $database = file_get_contents(__DIR__ . "/template/config/database");
-        $holder = "";
+        if ($kinds !== 'refresh') {
+            $database = file_get_contents(__DIR__ . "/template/config/database");
+            $holder = "";
 
-        foreach ($configuration as $item) {
-            $holder .= $item;
-            $holder .= "\n";
+            foreach ($configuration as $item) {
+                $holder .= $item;
+                $holder .= "\n";
+            }
+
+            $database = str_replace('{{configuration}}', $holder, $database);
+            file_put_contents("{$root}/config/database.php", $database);
         }
-
-        $database = str_replace('{{configuration}}', $holder, $database);
-        file_put_contents("{$root}/config/database.php", $database);
-
     }
 
     /**

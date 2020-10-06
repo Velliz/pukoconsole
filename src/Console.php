@@ -105,6 +105,9 @@ class Console
             case 'generate':
                 return $this->Generate($this->GetCommand(Console::DIRECTIVE));
                 break;
+                case 'refresh':
+                return $this->Refresh($this->GetCommand(Console::DIRECTIVE));
+                break;
             case 'version':
                 return $this;
                 break;
@@ -127,6 +130,23 @@ class Console
                 break;
             default:
                 return Echos::Prints("Setup exited with no process executed!");
+                break;
+        }
+    }
+
+    /**
+     * @param $kind
+     * @return string
+     * @throws Exception
+     */
+    public function Refresh($kind)
+    {
+        switch ($kind) {
+            case 'db':
+                return new Database($this->root, 'refresh');
+                break;
+            default:
+                return Echos::Prints("Refresh exited with no process executed!");
                 break;
         }
     }
