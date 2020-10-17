@@ -133,7 +133,7 @@ class Database
                 $this->SetupOracle($host, $port, $dbName, $user, $pass);
                 break;
             case 'sqlsrv':
-                $this->SetupSqlServer($host, $port, $dbName, $user, $pass);
+                $this->PDO = $this->SetupSqlServer($host, $port, $dbName, $user, $pass);
                 break;
             case 'mongo':
                 $this->SetupMongo($host, $port, $dbName, $user, $pass);
@@ -149,7 +149,12 @@ class Database
 
             echo Echos::Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
 
-            $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
+            if ($db === 'mysql') {
+                $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
+            }
+            if ($db === 'sqlsrv') {
+                $statement = $this->PDO->prepare("exec sp_columns " . $val['TABLE_NAME']);
+            }
             $statement->execute();
 
             $column = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -160,33 +165,64 @@ class Database
             $data = [];
 
             foreach ($column as $k => $v) {
-                $initValue = 'null';
-                $fieldlist[] = strtolower($v['Field']);
+                if ($db === 'mysql') {
+                    $initValue = 'null';
+                    $fieldlist[] = strtolower($v['Field']);
 
-                if ($v['Key'] === 'PRI') {
-                    $primary = $v['Field'];
-                }
+                    if ($v['Key'] === 'PRI') {
+                        $primary = $v['Field'];
+                    }
 
-                if (strpos($v['Type'], 'char') !== false) {
-                    $initValue = "''";
-                }
-                if (strpos($v['Type'], 'text') !== false) {
-                    $initValue = "''";
-                }
-                if (strpos($v['Type'], 'int') !== false) {
-                    $initValue = 0;
-                }
-                if (strpos($v['Type'], 'double') !== false) {
-                    $initValue = 0;
-                }
+                    if (strpos($v['Type'], 'char') !== false) {
+                        $initValue = "''";
+                    }
+                    if (strpos($v['Type'], 'text') !== false) {
+                        $initValue = "''";
+                    }
+                    if (strpos($v['Type'], 'int') !== false) {
+                        $initValue = 0;
+                    }
+                    if (strpos($v['Type'], 'double') !== false) {
+                        $initValue = 0;
+                    }
 
-                $data[$v['Field']] = $initValue;
+                    $data[$v['Field']] = $initValue;
 
-                $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
-                $property = str_replace('{{field}}', $v['Field'], $property);
-                $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
-                $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
-                $property = str_replace('{{value}}', $initValue, $property);
+                    $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                    $property = str_replace('{{field}}', $v['Field'], $property);
+                    $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
+                    $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
+                    $property = str_replace('{{value}}', $initValue, $property);
+                }
+                if ($db === 'sqlsrv') {
+                    $initValue = 'null';
+                    $fieldlist[] = strtolower($v['COLUMN_NAME']);
+
+                    if (strpos($v['TYPE_NAME'], 'identity') !== false) {
+                        $primary = $v['COLUMN_NAME'];
+                    }
+
+                    if (strpos($v['TYPE_NAME'], 'char') !== false) {
+                        $initValue = "''";
+                    }
+                    if (strpos($v['TYPE_NAME'], 'text') !== false) {
+                        $initValue = "''";
+                    }
+                    if (strpos($v['TYPE_NAME'], 'int') !== false) {
+                        $initValue = 0;
+                    }
+                    if (strpos($v['TYPE_NAME'], 'double') !== false) {
+                        $initValue = 0;
+                    }
+
+                    $data[$v['COLUMN_NAME']] = $initValue;
+
+                    $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                    $property = str_replace('{{field}}', $v['COLUMN_NAME'], $property);
+                    $nullable = ($v['IS_NULLABLE'] === 'YES') ? '' : 'not null';
+                    $property = str_replace('{{type}}', "{$v['TYPE_NAME']} $nullable", $property);
+                    $property = str_replace('{{value}}', $initValue, $property);
+                }
             }
 
             $model_file = file_get_contents(__DIR__ . "/template/model/model");
@@ -328,8 +364,25 @@ class Database
 
     public function SetupSqlServer($host, $port, $dbName, $user, $pass)
     {
-        //todo: generate mssql support via PDO interface
-        die(Echos::Prints("Sorry, this option not yet supported."));
+        try {
+            $pdoConnection = "odbc:Driver={SQL Server};Server=$host";
+            if (strlen($dbName) > 0) {
+                $pdoConnection = "odbc:Driver={SQL Server};Server=$host;Database=$dbName";
+            }
+            $dbi = new PDO($pdoConnection, $user, $pass);
+            $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            if (strlen($dbName) > 0) {
+                $this->query = "SELECT TABLE_NAME, TABLE_TYPE, TABLE_SCHEMA
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_CATALOG = '{$dbName}'
+                AND TABLE_TYPE = 'BASE TABLE'
+                ORDER BY TABLE_TYPE ASC;";
+            }
+            return $dbi;
+        } catch (Exception $ex) {
+            die(Echos::Prints("Failed to connect."));
+        }
     }
 
     public function SetupMongo($host, $port, $dbName, $user, $pass)
