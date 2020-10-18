@@ -275,7 +275,11 @@ class Database
             }
             //end region generate model test classes
 
-            $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract");
+            if ($db === 'sqlsrv') {
+                $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_sqlsrv");
+            } else {
+                $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_mysql");
+            }
             $contracts_file = str_replace('{{table}}', $val['TABLE_NAME'], $contracts_file);
             $contracts_file = str_replace('{{schema}}', $schema, $contracts_file);
             $contracts_file = str_replace('{{primary}}', $primary, $contracts_file);

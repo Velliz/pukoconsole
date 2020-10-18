@@ -1,0 +1,119 @@
+<?php
+
+namespace model\{{schema}};
+
+use Exception;
+use plugins\model\{{schema}}\{{table}};
+use pukoframework\pda\DBI;
+use pukoframework\pda\ModelContracts;
+use pukoframework\plugins\DataTables;
+
+/**
+ * Class {{table}}Contracts
+ * @package model
+ */
+class {{table}}Contracts extends {{table}} implements ModelContracts
+{
+
+    public static function GetData()
+    {
+        $sql = "SELECT {{column}}
+                FROM {{table}}
+                WHERE {{conditions}}";
+        return DBI::Prepare($sql)->GetData();
+    }
+
+    public static function GetById($id)
+    {
+        $sql = "SELECT {{column}}
+                FROM {{table}}
+                WHERE {{conditions}} AND {{primary-conditions}}";
+        return DBI::Prepare($sql)->FirstRow($id);
+    }
+
+    public static function IsExists($id)
+    {
+        $sql = "SELECT id FROM {{table}} WHERE {{conditions}} AND {{primary-conditions}};";
+        $data = DBI::Prepare($sql)->GetData($id);
+        if (sizeof($data) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function IsExistsWhere($column, $value)
+    {
+        $sql = sprintf("SELECT id FROM {{table}} WHERE {{conditions}} AND (%s = @1);", $column);
+        $data = DBI::Prepare($sql)->GetData($value);
+        if (sizeof($data) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function GetDataSize()
+    {
+        $sql = "SELECT COUNT(id) data FROM {{table}} WHERE {{conditions}};";
+        $data = DBI::Prepare($sql)->FirstRow();
+        return (int)$data['data'];
+    }
+
+    public static function GetDataSizeWhere($condition = [])
+    {
+        $strings = "";
+        foreach ($condition as $column => $values) {
+            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+        }
+        $sql = sprintf("SELECT COUNT(id) data FROM {{table}} WHERE {{conditions}} %s;", $strings);
+        $data = DBI::Prepare($sql)->FirstRow();
+        return (int)$data['data'];
+    }
+
+    public static function GetLastData()
+    {
+        $sql = "SELECT TOP 1 {{column}}
+        FROM {{table}}
+        WHERE {{conditions}}
+        ORDER BY {{primary}} DESC;";
+        return DBI::Prepare($sql)->FirstRow();
+    }
+
+    public static function SearchData($keyword = array())
+    {
+        $strings = "";
+        foreach ($keyword as $column => $values) {
+            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+        }
+        $sql = sprintf("SELECT {{column}}
+        FROM {{table}}
+        WHERE {{conditions}} %s;", $strings);
+        return DBI::Prepare($sql)->GetData();
+    }
+
+    public static function GetDataTable($condition = [])
+    {
+        $table = new DataTables(DataTables::POST);
+        $table->SetColumnSpec(array(
+            {{table-specs}}
+        ));
+
+        $strings = "";
+        foreach ($condition as $column => $values) {
+            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+        }
+
+        $sql = sprintf("SELECT {{column}}
+        FROM {{table}}
+        WHERE {{conditions}} %s;", $strings);
+
+        $table->SetQuery($sql);
+
+        return $table->GetDataTables(function ($result) {
+            foreach ($result as $key => $val) {
+                //custom implementation here
+                $result[$key] = $val;
+            }
+            return $result;
+        });
+    }
+}
