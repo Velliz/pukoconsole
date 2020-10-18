@@ -4,6 +4,5 @@ $db['{{schema}}'] = [
     'user'   => '{{user}}',
     'pass'   => '{{pass}}',
     'dbName' => '{{dbname}}',
-    'port'   => '{{port}}',
-    'cache'   => false,
+    'port'   => '{{port}}'
 ];

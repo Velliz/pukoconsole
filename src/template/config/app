@@ -1,12 +1,11 @@
 <?php return [
     'const' => [
-        'API' => '',
+        'API' => ''
     ],
     'cache' => [
         'kind' => 'MEMCACHED',
-        'expired' => 100,
         'host' => 'localhost',
-        'port' => 11211,
+        'port' => 11211
     ],
     'logs' => [
         'slack' => [
