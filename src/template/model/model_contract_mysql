@@ -93,6 +93,7 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     public static function GetDataTable($condition = [])
     {
         $table = new DataTables(DataTables::POST);
+        $table->SetDBEngine('mysql');
         $table->SetColumnSpec(array(
             {{table-specs}}
         ));
