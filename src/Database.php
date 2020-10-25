@@ -50,6 +50,7 @@ class Database
 
         $input = true;
         $configuration = array();
+        $schema = 'primary';
         while ($input) {
             $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
             if (strlen($db) <= 0) {
@@ -99,16 +100,24 @@ class Database
             }
         }
 
+        $freshadd = false;
         if ($kinds !== 'refresh') {
-            $database = file_get_contents(__DIR__ . "/template/config/database");
-            $holder = "";
+            $database = file_get_contents("{$root}/config/database.php");
+            if (strpos($database, 'return $db;') === false) {
+                $freshadd = true;
+                $database = file_get_contents(__DIR__ . "/template/config/database");
+            }
+            $holder = "\n";
 
             foreach ($configuration as $item) {
                 $holder .= $item;
                 $holder .= "\n";
             }
-
-            $database = str_replace('{{configuration}}', $holder, $database);
+            if ($freshadd) {
+                $database = str_replace('{{configuration}}', $holder, $database);
+            } else {
+                $database = str_replace('return $db;', $holder . "\n" . 'return $db;', $database);
+            }
             file_put_contents("{$root}/config/database.php", $database);
         }
     }
