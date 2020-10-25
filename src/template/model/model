@@ -10,6 +10,7 @@ namespace plugins\model\{{schema}};
 use pukoframework\pda\Model;
 
 /**
+ # #DatabaseType {{dbtype}}
  * #Table {{table}}
  * #PrimaryKey {{primary}}
  */

@@ -50,7 +50,6 @@ class Database
 
         $input = true;
         $configuration = array();
-        $schema = 'primary';
         while ($input) {
             $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
             if (strlen($db) <= 0) {
@@ -236,6 +235,7 @@ class Database
 
             $model_file = file_get_contents(__DIR__ . "/template/model/model");
             $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
+            $model_file = str_replace('{{dbtype}}', $db, $model_file);
             $model_file = str_replace('{{primary}}', $primary, $model_file);
             $model_file = str_replace('{{variables}}', $property, $model_file);
             $model_file = str_replace('{{schema}}', $schema, $model_file);
