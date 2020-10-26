@@ -115,6 +115,9 @@ class Routes
         ];
         $this->routes['router'][$this->attribute] = $data;
 
+        //sort ascending the routes definitions
+        ksort($this->routes['router']);
+
         file_put_contents(
             "{$this->root}/config/routes.php",
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
@@ -170,6 +173,9 @@ class Routes
             "accept" => explode(",", strtoupper($accept))
         ];
         $this->routes['router'][$this->attribute] = $data;
+
+        //sort ascending the routes definitions
+        ksort($this->routes['router']);
 
         file_put_contents(
             "{$this->root}/config/routes.php",
@@ -303,6 +309,9 @@ class Routes
         foreach ($routes_new as $k => $v) {
             $this->routes['router'][$k] = $v;
         }
+
+        //sort ascending the routes definitions
+        ksort($this->routes['router']);
 
         file_put_contents(
             "{$this->root}/config/routes.php",
