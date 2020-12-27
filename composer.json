@@ -2,7 +2,7 @@
   "name": "puko/console",
   "description": "Advanced console util that make pukoframework get things done on the fly",
   "type": "library",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "MIT",
   "authors": [
     {
@@ -19,9 +19,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "ext-pdo": "*",
-    "ext-json": "*"
+    "php": ">=7.0"
   },
   "autoload": {
     "psr-4": {
