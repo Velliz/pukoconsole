@@ -45,7 +45,7 @@ class Database
     public function __construct($root, $kinds)
     {
         if ($root === null) {
-            die(Echos::Prints('Base url required'));
+            die(Echos::Prints('Base url required!', true, 'light_red'));
         }
 
         $input = true;
@@ -93,7 +93,7 @@ class Database
                 $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
 
-            $more = Input::Read('Tambahkan koneksi lain? (y/n)');
+            $more = Input::Read('Add another database connection schema? (y/n)');
             if ($more !== 'y') {
                 $input = false;
             }
@@ -147,7 +147,7 @@ class Database
                 $this->SetupMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
         }
 
         $statement = $this->PDO->prepare($this->query);
@@ -334,7 +334,7 @@ class Database
                 //$this->GenerateMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db)));
+                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
         }
     }
 
@@ -365,7 +365,7 @@ class Database
             }
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect."));
+            die(Echos::Prints("Failed to connect.", true, 'light_red'));
         }
 
     }
@@ -395,7 +395,7 @@ class Database
             }
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect."));
+            die(Echos::Prints("Failed to connect.", true, 'light_red'));
         }
     }
 
@@ -412,13 +412,13 @@ class Database
      * @param $dbName
      * @param $user
      * @param $pass
-     * @throws \ReflectionException
+     * @param $schema
      * @throws Exception
      */
     public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass, $schema)
     {
         if (strlen($dbName) === 0) {
-            throw new Exception('Database connection setup required.');
+            die(Echos::Prints('Database connection setup required.', true, 'light_red'));
         }
         $this->PDO = $this->SetupMySQL($host, $port, '', $user, $pass);
 
@@ -513,7 +513,7 @@ class Database
 
     public function __toString()
     {
-        return Echos::Prints('Database setting completed');
+        return Echos::Prints('Database setting completed', true, 'green');
     }
 
 }

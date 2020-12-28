@@ -16,7 +16,7 @@ class Secure
 
     public function __construct($root)
     {
-        echo Echos::Prints("AES-256 secure initialization ...");
+        echo Echos::Prints("AES-256 secure initialization ...", true, 'blue');
 
         $identifier = Input::Read("Identifier");
         $key = Input::Read("Secure key");
@@ -41,7 +41,7 @@ class Secure
 
     public function __toString()
     {
-        return Echos::Prints("secure config created!");
+        return Echos::Prints("secure config created!", true, 'green');
     }
 
 }

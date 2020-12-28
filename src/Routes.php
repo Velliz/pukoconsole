@@ -48,7 +48,7 @@ class Routes
     public function __construct($root, $directive, $action, $attribute)
     {
         if ($root === null) {
-            die(Echos::Prints('Base url required'));
+            die(Echos::Prints('Base url required!', true, 'light_red'));
         }
         $this->root = $root;
 
@@ -69,6 +69,10 @@ class Routes
         }
     }
 
+    /**
+     * @param $pages
+     * @throws Exception
+     */
     public function structure($pages)
     {
         switch ($this->action) {
@@ -85,7 +89,7 @@ class Routes
                 $this->crud($pages);
                 break;
             default:
-                die(Echos::Prints('Command not supported'));
+                die(Echos::Prints('Command not supported!', true, 'light_red'));
                 break;
         }
     }
@@ -97,7 +101,7 @@ class Routes
     public function add($segment)
     {
         if (isset($segment[$this->attribute])) {
-            die(Echos::Prints("Routes already registered!"));
+            die(Echos::Prints("Routes already registered!", true, 'light_red'));
         }
 
         $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
@@ -146,7 +150,7 @@ class Routes
 
         $this->ProcessController($cNamespaces, $className, $function, $this->directive);
 
-        return Echos::Prints("Routes {$cNamespaces} {$function} added.");
+        return Echos::Prints("Routes {$cNamespaces} {$function} added.", true, 'green');
     }
 
     /**
@@ -156,7 +160,7 @@ class Routes
     public function update($segment)
     {
         if (!isset($segment[$this->attribute])) {
-            die(Echos::Prints("Routes is not registered! Add them first."));
+            die(Echos::Prints("Routes is not registered! Add them first.", true, 'light_red'));
         }
 
         $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
@@ -182,7 +186,7 @@ class Routes
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
-        return Echos::Prints("Routes {$function} modified.");
+        return Echos::Prints("Routes {$function} modified.", true, 'green');
     }
 
     /**
@@ -191,7 +195,7 @@ class Routes
     public function lists($routes = array())
     {
         $count = count($routes);
-        echo Echos::Prints("Routes list found ({$count}) entries.");
+        echo Echos::Prints("Routes list found ({$count}) entries.", true, 'green');
         foreach ($routes as $key => $value) {
             $accept = implode(",", $value["accept"]);
             echo Echos::Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
@@ -200,18 +204,27 @@ class Routes
 
     public function remove()
     {
-        die(Echos::Prints('To risky. Please delete them manually.'));
+        die(Echos::Prints('To risky. Please delete them manually.', true, 'light_red'));
     }
 
+    /**
+     * @param $segment
+     * @throws Exception
+     */
     public function crud($segment)
     {
         //limit to service only?
         if ($this->directive !== 'service') {
-            die(Echos::Prints("Aborting! Only applicable to service"));
+            die(Echos::Prints("Aborting! Only applicable to service", true, 'light_red'));
         }
+
+        echo Echos::Prints("Make sure you already successful execute 'php puko setup db' before executing this command!", true, 'yellow');
 
         //check if entity is available on the database.
         $base = explode('/', $this->attribute);
+        if (sizeof($base) !== 2) {
+            die(Echos::Prints("Aborting! incorrect parameter: schema/table", true, 'light_red'));
+        }
         $schema = $base[0];
         $entity = $base[1];
 
@@ -250,7 +263,7 @@ class Routes
         //check if routes exist.
         foreach ($routes_new as $route => $val) {
             if (isset($segment[$route])) {
-                die(Echos::Prints("Aborting! Routes '{$route}' already registered!"));
+                die(Echos::Prints("Aborting! Routes '{$route}' already registered!", true, 'light_red'));
             }
         }
 
@@ -263,7 +276,11 @@ class Routes
         //baca dulu dari model plugins daftar variable yang ada
         $model = '\\plugins\\model\\' . $schema . '\\' . $entity;
 
-        $object = new $model;
+        try {
+            $object = new $model;
+        } catch (\Error $ex) {
+            die(Echos::Prints("Aborting! Controller file required '{$model}.php' not found! maybe you entered wrong schema/table name?", true, 'light_red'));
+        }
 
         $pdc = new ReflectionClass($object);
         foreach ($pdc->getProperties() as $prop) {
@@ -318,9 +335,7 @@ class Routes
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
-        echo Echos::Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), false);
-
-
+        echo Echos::Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), true, 'green');
     }
 
     public function ProcessController($namespace, $class, $function, $kind)
@@ -403,7 +418,7 @@ class Routes
 
     public function __toString()
     {
-        return Echos::Prints('Routes initialization complete.');
+        return Echos::Prints('Routes initialization complete.', true, 'green');
     }
 
     public static function StringReplaceSlash($string)

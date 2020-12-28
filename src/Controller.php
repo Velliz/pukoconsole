@@ -43,9 +43,7 @@ class Controller
         $template = null;
 
         if ($value === null) {
-            die(Echos::Prints("name not specified. " .
-                "example: php puko setup auth UserController"
-            ));
+            die(Echos::Prints("Name not specified! example: php puko setup auth UserController", true, 'light_red'));
         }
 
         $this->action = $action;

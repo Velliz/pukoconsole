@@ -39,15 +39,6 @@ class Colors
         $this->foreground_colors['yellow'] = '1;33';
         $this->foreground_colors['light_gray'] = '0;37';
         $this->foreground_colors['white'] = '1;37';
-
-        $this->background_colors['black'] = '40';
-        $this->background_colors['red'] = '41';
-        $this->background_colors['green'] = '42';
-        $this->background_colors['yellow'] = '43';
-        $this->background_colors['blue'] = '44';
-        $this->background_colors['magenta'] = '45';
-        $this->background_colors['cyan'] = '46';
-        $this->background_colors['light_gray'] = '47';
     }
 
     /**

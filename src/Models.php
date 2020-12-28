@@ -58,18 +58,17 @@ class Models
             case 'remove':
                 break;
             default:
-                die(Echos::Prints('Command not valid!'));
-                break;
+                die(Echos::Prints('Command not valid!', true, 'light_red'));
         }
     }
 
     public function add($root, $model_name, $schema)
     {
         if (empty($model_name)) {
-            die(Echos::Prints('Model name required!'));
+            die(Echos::Prints('Model name required!', true, 'light_red'));
         }
         if (file_exists($root . "/plugins/model/{$schema}/{$this->name}.php")) {
-            die(Echos::Prints('Model already exists! Please update instead creating new one.'));
+            die(Echos::Prints('Model already exists! Please update instead creating new one.', true, 'light_red'));
         }
 
         $this->name = $model_name;
@@ -200,7 +199,7 @@ class Models
             "plugins/model/{$this->schema}/{$this->name}.php 
                 | tests/unit/model/{$this->schema}/{$this->name}ModelTest.php 
                 | tests/unit/controller/{$this->schema}/{$this->name}ControllerTest.php 
-                created!");
+                created!", true, 'green');
     }
 
 }

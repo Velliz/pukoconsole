@@ -23,13 +23,13 @@ class Tests
      */
     public function __construct($directive)
     {
-        Echos::Prints("Preparing test using " . $directive, true);
+        Echos::Prints("Preparing test using " . $directive, true, 'blue');
         echo exec("vendor\bin\phpunit");
         return true;
     }
 
     public function __toString()
     {
-        return Echos::Prints("Testing completed.");
+        return Echos::Prints("Testing completed.", true, 'green');
     }
 }

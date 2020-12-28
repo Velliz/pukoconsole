@@ -20,11 +20,11 @@ class Cli
     public function __construct($command = null)
     {
         if ($command === null) {
-            die(Echos::Prints("Cli parameter required!"));
+            die(Echos::Prints("Missing required cli parameter!", true, 'light_red'));
         }
 
-        echo Echos::Prints("Puko project initialized at cli");
-        echo Echos::Prints("Press (Ctrl + C) to stop.");
+        echo Echos::Prints("puko framework project initialized at console", true, 'blue');
+        echo Echos::Prints("press (Ctrl + C) to stop");
         echo exec("php cli {$command}");
 
         return true;

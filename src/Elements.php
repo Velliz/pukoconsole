@@ -34,7 +34,7 @@ class Elements
         $this->type = $type;
 
         if ($type === '' || $type === null) {
-            die(Echos::Prints('Element name must defined!'));
+            die(Echos::Prints('Element name must defined!', true, 'light_red'));
         }
 
         if ($command === 'add') {
@@ -117,7 +117,7 @@ class Elements
 
     public function __toString()
     {
-        return Echos::Prints("Element {$this->command} created.");
+        return Echos::Prints("Element {$this->command} created.", true, 'green');
     }
 
 }
