@@ -44,6 +44,7 @@ class Routes
      * @param $directive
      * @param $action
      * @param $attribute
+     * @throws Exception
      */
     public function __construct($root, $directive, $action, $attribute)
     {

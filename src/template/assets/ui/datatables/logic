@@ -1,0 +1,220 @@
+$(function() {
+    let ui = $('.form');
+    let form = ui.html();
+
+    ui.remove();
+
+    //another custom variable definitions goes here
+
+    let table = $('#{{table}}').DataTable({
+        ajax: {
+            url: "{{api-table}}",
+            data: function (data) {
+                //data.customization = components.val(); //send post data to datatable backend
+            },
+            type: "POST",
+            dataType: "json",
+            responsive: true
+        },
+        processing: true,
+        serverSide: true,
+        dom: 'Bfrtip',
+        //language: language, //setup custom language for datatables
+        buttons: [
+            {
+                text: "create",
+                className: "btn btn-primary btn-sm btn-create"
+            }
+        ],
+        preDrawCallback: function(oSettings) {},
+        rowCallback: function (row, data) {
+            let update = `<a class="btn btn-primary btn-xs btn-update" title="Update selected data" id="${data[0]}">
+                             <i class="fa fa-pencil"></i>
+                         </a>`;
+            let delete = `<a class="btn btn-danger btn-xs btn-delete" title="Delete selected data" id="${data[0]}">
+                             <i class="fa fa-trash"></i>
+                         </a>`;
+
+            {{rowcallback-group}}
+        },
+        fnDrawCallback: function (oSettings) {
+            $('.btn-update').on('click', function() {
+                let id = $(this).attr('id');
+                let updatebox = bootbox.dialog({
+                    title: 'update data',
+                    message: form,
+                    size: 'small',
+                    buttons: {
+                        cancel: {
+                            label: `cancel`,
+                            className: 'btn-default',
+                            callback: function () {}
+                        },
+                        ok: {
+                            label: `delete`,
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                    url: `{{api-update}}`,
+                                    dataType: 'json',
+                                    type: 'POST',
+                                    data: {
+                                        {{var-group}}
+                                    },
+                                    success: function (data) {
+                                        new PNotify({
+                                            title: `Data deleted`,
+                                            text: `Selected data deleted successfully!`,
+                                            type: `success`,
+                                            styling: 'bootstrap3',
+                                            mobile: {
+                                                swipe_dismiss: true,
+                                                styling: true
+                                            },
+                                            buttons: {
+                                                closer: true,
+                                                sticker: false,
+                                                closer_hover: true,
+                                                show_on_nonblock: true
+                                            }
+                                        });
+                                        //table re-draw
+                                        table.ajax.reload();
+                                    },
+                                    error: function (error, text, throws) {
+                                        if (jqXHR.responseJSON !== undefined) {
+                                            alert(`${throws}: ${error.responseJSON.exception.Message}`);
+                                        } else {
+                                            alert('Failed connect to server!');
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+                updatebox.init({
+                    //custom box handle goes here
+                });
+            });
+            $('.btn-delete').on('click', function() {
+                let id = $(this).attr('id');
+                let deletebox = bootbox.dialog({
+                    title: 'delete data',
+                    message: `are you sure to delete selected data?`,
+                    size: 'small',
+                    buttons: {
+                        cancel: {
+                            label: `cancel`,
+                            className: 'btn-default',
+                            callback: function () {}
+                        },
+                        ok: {
+                            label: `delete`,
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                    url: `{{api-delete}}`,
+                                    dataType: 'json',
+                                    type: 'DELETE',
+                                    success: function (data) {
+                                        new PNotify({
+                                            title: `Data deleted`,
+                                            text: `Selected data deleted successfully!`,
+                                            type: `success`,
+                                            styling: 'bootstrap3',
+                                            mobile: {
+                                                swipe_dismiss: true,
+                                                styling: true
+                                            },
+                                            buttons: {
+                                                closer: true,
+                                                sticker: false,
+                                                closer_hover: true,
+                                                show_on_nonblock: true
+                                            }
+                                        });
+                                        //table re-draw
+                                        table.ajax.reload();
+                                    },
+                                    error: function (error, text, throws) {
+                                        if (jqXHR.responseJSON !== undefined) {
+                                            alert(`${throws}: ${error.responseJSON.exception.Message}`);
+                                        } else {
+                                            alert('Failed connect to server!');
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+                deletebox.init({
+                    //custom box handle goes here
+                });
+            });
+        }
+    });
+
+    $(document).on('click', '.btn-create', function() {
+        let createbox = bootbox.dialog({
+            title: 'create new {{table}}',
+            message: form,
+            size: 'small',
+            buttons: {
+                cancel: {
+                    label: `cancel`,
+                    className: 'btn-default',
+                    callback: function () {}
+                },
+                ok: {
+                    label: `create`,
+                    className: 'btn-primary',
+                    callback: function () {
+                        $.ajax({
+                            url: `{{api-create}}`,
+                            dataType: 'json',
+                            type: 'POST',
+                            data: {
+                                {{var-group}}
+                            },
+                            success: function (data) {
+                                new PNotify({
+                                    title: `Data saved`,
+                                    text: `New data saved successfully!`,
+                                    type: `success`,
+                                    styling: 'bootstrap3',
+                                    mobile: {
+                                        swipe_dismiss: true,
+                                        styling: true
+                                    },
+                                    buttons: {
+                                        closer: true,
+                                        sticker: false,
+                                        closer_hover: true,
+                                        show_on_nonblock: true
+                                    }
+                                });
+                                //table re-draw
+                                table.ajax.reload();
+                            },
+                            error: function (error, text, throws) {
+                                if (jqXHR.responseJSON !== undefined) {
+                                    alert(`${throws}: ${error.responseJSON.exception.Message}`);
+                                } else {
+                                    alert('Failed connect to server!');
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        createbox.init({
+            //custom box handle goes here
+        });
+    });
+
+    //table re-draw
+    //table.ajax.reload();
+});

@@ -115,6 +115,8 @@ class Console
         switch ($kind) {
             case 'db':
                 return new Database($this->root, 'generate');
+            case 'ui':
+                return new Ui($this->root, 'datatables');
             default:
                 return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
         }

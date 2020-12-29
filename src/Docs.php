@@ -27,4 +27,13 @@ class Docs
         //todo: automated creating docs
     }
 
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return Echos::Prints('Command not supported!', true, 'yellow');
+    }
+
+
 }
