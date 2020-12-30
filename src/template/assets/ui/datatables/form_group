@@ -1,0 +1,5 @@
+        <div class="form-group">
+            <label>{{column}}</label>
+            <input type="text" name="{{column}}" class="form-control {{column}}" placeholder="Input {{column}}" style="height: 38px;">
+            <p class="help-block">description about {{column}} here.</p>
+        </div>

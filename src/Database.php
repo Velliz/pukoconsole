@@ -316,7 +316,7 @@ class Database
      * @param $user
      * @param $pass
      * @param $schema
-     * @throws \ReflectionException
+     * @throws Exception
      */
     public function Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema)
     {

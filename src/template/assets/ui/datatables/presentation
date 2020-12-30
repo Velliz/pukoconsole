@@ -18,5 +18,5 @@
     </form>
 </div>
 <!-- imprt here: JQuery, DataTables, DataTables-buttons, PNotify, Bootbox, FontAwesome-Icons -->
+{!js(<!-- place your custom JavaScript functions and constants file here -->)}
 {!js(<script src="{{js}}"></script>)}
-{!js(<!-- place your custom JavaScript file here -->)}

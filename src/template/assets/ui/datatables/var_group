@@ -1,0 +1,1 @@
+{{column}}: $('.bootbox-body input[name={{column}}]').val(),

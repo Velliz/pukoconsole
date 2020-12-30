@@ -5,12 +5,13 @@ $(function() {
     ui.remove();
 
     //another custom variable definitions goes here
+    //let components = $('.components');
 
     let table = $('#{{table}}').DataTable({
         ajax: {
             url: "{{api-table}}",
             data: function (data) {
-                //data.customization = components.val(); //send post data to datatable backend
+                //data.customization = components.val(); //send post data to datatables backend
             },
             type: "POST",
             dataType: "json",
@@ -94,6 +95,23 @@ $(function() {
                     }
                 });
                 updatebox.init({
+                    $.ajax({
+                        url: `{{api-read}}`,
+                        dataType: 'json',
+                        type: 'GET',
+                        success: function (data) {
+                            let {{table}} = data.{{table}};
+                            {{assign-group}}
+                        },
+                        error: function (error, text, throws) {
+                            if (jqXHR.responseJSON !== undefined) {
+                                alert(`${throws}: ${error.responseJSON.exception.Message}`);
+                            } else {
+                                alert('Failed connect to server!');
+                            }
+                        }
+                    });
+
                     //custom box handle goes here
                 });
             });
@@ -153,6 +171,8 @@ $(function() {
                     //custom box handle goes here
                 });
             });
+
+            //needs other btn like validate? add custom action button below here
         }
     });
 
