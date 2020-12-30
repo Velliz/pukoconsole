@@ -4,6 +4,7 @@ namespace pukoconsole;
 
 use Exception;
 use PDO;
+use pukoconsole\util\Commons;
 use pukoconsole\util\Echos;
 use pukoconsole\util\Input;
 
@@ -14,7 +15,7 @@ use pukoconsole\util\Input;
 class Ui
 {
 
-    use Echos;
+    use Echos, Commons;
 
     var $root = '';
 
@@ -75,6 +76,13 @@ class Ui
         $fields = [];
         switch ($kinds) {
             case "datatables":
+                //routes exists check
+                $routes = include "{$root}/config/routes.php";
+                if (isset($routes['router']["{$this->schema}/{$this->table}"])) {
+                    die(Echos::Prints("Aborting! Routes '{$this->schema}/{$this->table}' already registered!", true, 'light_red'));
+                }
+
+                //get database column
                 foreach ($column as $k => $v) {
                     if ($dbconn['dbType'] === 'mysql') {
                         $fields[] = strtolower($v['Field']);
@@ -121,7 +129,11 @@ class Ui
                 $rowcallback_group = "";
                 foreach ($fields as $key => $field) {
                     $rowcallback_group_tpl = file_get_contents(__DIR__ . "/template/assets/ui/datatables/rowcallback_group");
-                    $rowcallback_group_tpl = str_replace('{{idx}}', $key, $rowcallback_group_tpl);
+                    if ($key === sizeof($fields) - 1) {
+                        $rowcallback_group_tpl = str_replace('{{idx}}', "$('td:eq({{idx}})', row).html(updates + deletes);", $rowcallback_group_tpl);
+                    } else {
+                        $rowcallback_group_tpl = str_replace('{{idx}}', $key, $rowcallback_group_tpl);
+                    }
                     $rowcallback_group .= $rowcallback_group_tpl;
                 }
 
@@ -140,6 +152,22 @@ class Ui
                     'rowcallback_group' => $rowcallback_group,
                     'assign_group' => $assign_group
                 ]);
+
+                //routes appending
+                $routes['router']["{$this->schema}/{$this->table}"] = [
+                    "controller" => "ui\\{{$this->schema}}",
+                    "function" => $this->table,
+                    "accept" => [
+                        "GET"
+                    ]
+                ];
+                //sort ascending the routes definitions
+                ksort($routes['router']);
+
+                file_put_contents(
+                    "{$this->root}/config/routes.php",
+                    '<?php $routes = ' . $this->var_export54($routes) . '; return $routes;'
+                );
 
                 break;
             default:
