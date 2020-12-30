@@ -12,7 +12,7 @@
     </table>
 </div>
 
-<div class="hidden form">
+<div class="hidden form" style="display: none;">
     <form action="" method="post">
 {{form-group}}
     </form>
