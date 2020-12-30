@@ -130,14 +130,15 @@ class Ui
                 foreach ($fields as $key => $field) {
                     $rowcallback_group_tpl = file_get_contents(__DIR__ . "/template/assets/ui/datatables/rowcallback_group");
                     if ($key === sizeof($fields) - 1) {
-                        $rowcallback_group_tpl = str_replace('{{idx}}', "$('td:eq({{idx}})', row).html(updates + deletes);", $rowcallback_group_tpl);
+                        $rowcallback_group_tpl = "$('td:eq({{idx}})', row).html(updates + deletes);";
+                        $rowcallback_group_tpl = str_replace('{{idx}}', $key, $rowcallback_group_tpl);
                     } else {
                         $rowcallback_group_tpl = str_replace('{{idx}}', $key, $rowcallback_group_tpl);
                     }
                     $rowcallback_group .= $rowcallback_group_tpl;
                 }
 
-                $js = "assets/script/ui/{$this->schema}/{$this->table}.js";
+                $js = "assets/scripts/ui/{$this->schema}/{$this->table}.js";
 
                 $this->ProcessController('controller/ui', $this->schema, $this->table, 'view');
                 $this->ProcessPresentation('ui/' . $this->schema, $this->table, [
@@ -155,7 +156,7 @@ class Ui
 
                 //routes appending
                 $routes['router']["{$this->schema}/{$this->table}"] = [
-                    "controller" => "ui\\{{$this->schema}}",
+                    "controller" => "ui\\{$this->schema}",
                     "function" => $this->table,
                     "accept" => [
                         "GET"
