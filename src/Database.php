@@ -36,6 +36,8 @@ class Database
      */
     var $query = '';
 
+    var $driver = '';
+
     /**
      * Database constructor.
      * @param null $root
@@ -70,6 +72,9 @@ class Database
             $dbName = Input::Read('Database Name');
             $user = Input::Read('Username');
             $pass = Input::Read('Password');
+            $driver = Input::Read('Driver');
+
+            $this->driver = $driver;
 
             $cf = file_get_contents(__DIR__ . "/template/config/database_item");
 
@@ -80,6 +85,7 @@ class Database
             $cf = str_replace('{{pass}}', $pass, $cf);
             $cf = str_replace('{{dbname}}', $dbName, $cf);
             $cf = str_replace('{{port}}', $port, $cf);
+            $cf = str_replace('{{driver}}', $driver, $cf);
 
             $configuration[$schema] = $cf;
 
@@ -379,10 +385,21 @@ class Database
     public function SetupSqlServer($host, $port, $dbName, $user, $pass)
     {
         try {
-            $pdoConnection = "odbc:Driver={SQL Server};Server=$host";
-            if (strlen($dbName) > 0) {
-                $pdoConnection = "odbc:Driver={SQL Server};Server=$host;Database=$dbName";
+            if ($this->driver === 'odbc') {
+                //connection from pdo_odbc
+                $pdoConnection = "odbc:Driver={SQL Server};Server=$host";
+                if (strlen($dbName) > 0) {
+                    $pdoConnection = "odbc:Driver={SQL Server};Server=$host;Database=$dbName";
+                }
             }
+            if ($this->driver === 'sqlsrv') {
+                //connection from pdo_sqlsrv
+                $pdoConnection = "sqlsrv:Server=$host,$port";
+                if (strlen($dbName) > 0) {
+                    $pdoConnection = "sqlsrv:Server=$host,$port;Database=$dbName";
+                }
+            }
+
             $dbi = new PDO($pdoConnection, $user, $pass);
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
