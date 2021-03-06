@@ -14,8 +14,8 @@ refresh  Reload and apply updates from external sources without config change
 routes   Routing
          [view/service/console/list/error/lost] [add/update/delete/crud] [url]
 
-generate Auto generate service
-         [db]
+generate Auto generate wizard
+         [db/ui]
 
 serve    Start project on localhost
          [port]
