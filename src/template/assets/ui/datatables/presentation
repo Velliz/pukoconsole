@@ -1,5 +1,18 @@
+<!-- Datatables bs style -->
+{!css(<link href="assets/libraries/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">)}
+{!css(<link href="assets/libraries/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">)}
+{!css(<link href="assets/libraries/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">)}
+{!css(<link href="assets/libraries/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">)}
+{!css(<link href="assets/libraries/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">)}
+
+<!-- Dropzone style -->
+{!css(<link href="assets/libraries/dropzone/dist/min/dropzone.min.css" rel="stylesheet">)}
+
+<!-- custom style -->
 {!css(<!-- place your custom CSS file here -->)}
+
 <h2>{{table}}</h2>
+
 <div class="table-responsive">
     <table id="{{table}}" class="table table-striped table-bordered">
         <thead>
@@ -17,6 +30,30 @@
 {{form-group}}
     </form>
 </div>
-<!-- imprt here: JQuery, DataTables, DataTables-buttons, PNotify, Bootbox, FontAwesome-Icons -->
-{!js(<!-- place your custom JavaScript functions and constants file here -->)}
+
+<!-- Datatables js -->
+{!js(<script src="assets/libraries/datatables.net/js/jquery.dataTables.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-buttons/js/dataTables.buttons.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-buttons/js/buttons.flash.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-buttons/js/buttons.html5.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-buttons/js/buttons.print.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-responsive/js/dataTables.responsive.min.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>)}
+{!js(<script src="assets/libraries/datatables.net-scroller/js/dataTables.scroller.min.js"></script>)}
+
+<!-- jszip -->
+{!js(<script src="assets/libraries/jszip/dist/jszip.min.js"></script>)}
+
+<!-- pdmake -->
+{!js(<script src="assets/libraries/pdfmake/build/pdfmake.min.js"></script>)}
+{!js(<script src="assets/libraries/pdfmake/build/vfs_fonts.js"></script>)}
+
+<!-- dropzone.js -->
+{!js(<script src="assets/libraries/dropzone/dist/min/dropzone.min.js"></script>)}
+
+<!-- custom scripts -->
 {!js(<script src="{{js}}"></script>)}
