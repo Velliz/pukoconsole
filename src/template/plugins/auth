@@ -22,14 +22,17 @@ class {{class}} implements Auth
     }
 
     /**
+     * @param $username
+     * @param $password
      * @return PukoAuth|bool
      * This method should return instance of PukoAuth if login success.
-     * Reurn fase if login failed.
+     * Return false if login failed.
+     * @throws Exception
      */
     public function Login($username, $password)
     {
         //todo: replace null with login data and array with permission code
-        return new PukoAuth(1, array());
+        return new PukoAuth(0, []);
     }
 
     public function Logout()
