@@ -94,7 +94,7 @@ $(function() {
                         }
                     }
                 });
-                updatebox.init({
+                updatebox.init(function () {
                     $.ajax({
                         url: `{{api-read}}`,
                         dataType: 'json',
@@ -167,7 +167,7 @@ $(function() {
                         }
                     }
                 });
-                deletebox.init({
+                deletebox.init(function () {
                     //custom box handle goes here
                 });
             });
@@ -230,7 +230,7 @@ $(function() {
                 }
             }
         });
-        createbox.init({
+        createbox.init(function () {
             //custom box handle goes here
         });
     });
