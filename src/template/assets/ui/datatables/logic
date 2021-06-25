@@ -23,6 +23,10 @@ $(function() {
         //language: language, //setup custom language for datatables
         buttons: [
             {
+                extend: "pageLength",
+                className: "btn-sm"
+            },
+            {
                 text: "create",
                 className: "btn btn-primary btn-sm btn-create"
             }
