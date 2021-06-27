@@ -293,6 +293,7 @@ class Ui
         $js = file_get_contents(__DIR__ . "/template/assets/ui/datatables/logic");
         $js = str_replace('{{table}}', $payloads['table'], $js);
         $js = str_replace('{{api-table}}', "{$function}/table", $js);
+        $js = str_replace('{{api-create}}', $function . '/create', $js);
         $js = str_replace('{{api-update}}', $function . '/${id}/update', $js);
         $js = str_replace('{{api-delete}}', $function . '/${id}/delete', $js);
         $js = str_replace('{{api-read}}', $function . '/${id}', $js);
