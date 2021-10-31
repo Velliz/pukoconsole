@@ -55,6 +55,9 @@ class Routes
 
         $this->directive = $directive;
         $this->action = $action;
+
+        $attribute = str_replace("?", "{?}", $attribute);
+
         $this->attribute = $attribute;
 
         $this->routes = include "{$root}/config/routes.php";
