@@ -40,9 +40,9 @@ class Database
 
     /**
      * Database constructor.
-     * @param null $root
+     * @param $root
      * @param $kinds
-     * @throws \ReflectionException
+     * @throws Exception
      */
     public function __construct($root, $kinds)
     {

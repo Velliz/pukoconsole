@@ -96,6 +96,8 @@ class Console
                 return new Cli($this->GetCommand(Console::DIRECTIVE));
             case 'generate':
                 return $this->Generate($this->GetCommand(Console::DIRECTIVE));
+            case 'language':
+                return $this->Language($this->GetCommand(Console::DIRECTIVE));
             case 'refresh':
                 return $this->Refresh($this->GetCommand(Console::DIRECTIVE));
             case 'version':
@@ -117,6 +119,20 @@ class Console
                 return new Database($this->root, 'generate');
             case 'ui':
                 return new Ui($this->root, 'datatables');
+            default:
+                return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
+        }
+    }
+
+    /**
+     * @param $kind
+     * @return Language|string
+     */
+    public function Language($kind)
+    {
+        switch ($kind) {
+            case 'build':
+                return new Language($this->root, $kind);
             default:
                 return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
         }
