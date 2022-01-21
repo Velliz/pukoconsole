@@ -130,12 +130,7 @@ class Console
      */
     public function Language($kind)
     {
-        switch ($kind) {
-            case 'build':
-                return new Language($this->root, $kind);
-            default:
-                return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
-        }
+        return new Language($this->root, $kind);
     }
 
     /**

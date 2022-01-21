@@ -30,8 +30,8 @@ generate Auto generate wizard for Database and User Interface
          [db]
          [ui]
 
-language Scan and build all this->say() directive to master.json file
-         [build]
+language Scan and build all say() directive to master.json file
+         <directory path>
 
 serve    Start project on localhost with PHP build in server
          [port]
