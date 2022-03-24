@@ -248,6 +248,11 @@ class Routes
             "function" => "delete",
             "accept" => ["DELETE"]
         ];
+        $routes_new["{$entity}/explore"] = [
+            "controller" => "{$schema}\\{$entity}",
+            "function" => "explore",
+            "accept" => ["POST", "GET"]
+        ];
         $routes_new["{$entity}/table"] = [
             "controller" => "{$schema}\\{$entity}",
             "function" => "table",

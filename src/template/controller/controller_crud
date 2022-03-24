@@ -86,6 +86,20 @@ class {{entity}} extends Service
     }
 
     /**
+     * @return array
+     * @throws Exception
+     */
+    public function explore()
+    {
+        $keyword = [];
+
+        $param = Request::JsonBody();
+        //post addition filter here
+
+        return \model\{{schema}}\{{entity}}Contracts::SearchDataPagination($keyword);
+    }
+
+    /**
      * @return mixed
      * @throws Exception
      */

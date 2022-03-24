@@ -90,6 +90,31 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
         return DBI::Prepare($sql)->GetData();
     }
 
+    public static function SearchDataPagination($keyword = array())
+    {
+        $pagination = new Paginations();
+        $pagination->SetDBEngine('mysql');
+
+        $strings = "";
+        foreach ($keyword as $column => $values) {
+            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+        }
+
+        $sql = sprintf("SELECT {{column}}
+        FROM {{table}}
+        WHERE {{conditions}} %s;", $strings);
+
+        $pagination->SetQuery($sql);
+
+        return $pagination->GetDataPaginations(function ($result) {
+            foreach ($result as $key => $val) {
+                //custom implementation here
+                $result[$key] = $val;
+            }
+            return $result;
+        });
+    }
+
     public static function GetDataTable($condition = [])
     {
         $table = new DataTables(DataTables::POST);
