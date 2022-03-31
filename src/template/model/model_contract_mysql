@@ -7,6 +7,7 @@ use plugins\model\{{schema}}\{{table}};
 use pukoframework\pda\DBI;
 use pukoframework\pda\ModelContracts;
 use pukoframework\plugins\DataTables;
+use pukoframework\plugins\Paginations;
 
 /**
  * Class {{table}}Contracts
