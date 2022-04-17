@@ -3,6 +3,7 @@
 namespace {{namespace}};
 
 use pukoframework\middleware\Sockets;
+use Ratchet\ConnectionInterface;
 
 /**
  * #Template html false
