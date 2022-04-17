@@ -23,8 +23,9 @@ routes   Routing generation and auto create associated controller files
          [service] [crud] [url]
          [view] [add] [url]
          [view] [update] [url]
-         [console] [add] [url]
-         [console] [update] [url]
+         [console] [add] [executable path]
+         [console] [update] [executable path]
+         [socket] [add] [executable path]
 
 generate Auto generate wizard for Database and User Interface
          [db]

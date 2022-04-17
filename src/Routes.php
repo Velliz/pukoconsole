@@ -62,7 +62,7 @@ class Routes
 
         $this->routes = include "{$root}/config/routes.php";
 
-        if (in_array($this->directive, array('view', 'service', 'console'))) {
+        if (in_array($this->directive, array('view', 'service', 'console', 'socket'))) {
             $this->structure($this->routes['router']);
         } else if (in_array($this->directive, array('error', 'lost'))) {
             $this->errorOrLost($this->directive);
@@ -110,7 +110,7 @@ class Routes
 
         $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
         $function = Input::Read('Function name');
-        if ($this->directive === 'console') {
+        if ($this->directive === 'console' || $this->directive === 'socket') {
             $accept = 'get';
         } else {
             $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
@@ -169,7 +169,7 @@ class Routes
 
         $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
         $function = Input::Read('Function name');
-        if ($this->directive === 'console') {
+        if ($this->directive === 'console' || $this->directive === 'socket') {
             $accept = 'get';
         } else {
             $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
