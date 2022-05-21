@@ -56,9 +56,9 @@ class Language
                             }
 
                             if ($say_variables > 0) {
-                                $localization_string = "Describe message about {$say_directive} with parameters{$value_var}";
+                                $localization_string = "Describe your message about {$say_directive} with parameters{$value_var}";
                             } else {
-                                $localization_string = "Describe message about {$say_directive}";
+                                $localization_string = "Describe your message about {$say_directive}";
                             }
 
                             if (!isset($lang_vars[$say_directive])) {

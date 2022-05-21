@@ -2,13 +2,13 @@
   "name": "puko/console",
   "description": "Advanced console util that make pukoframework get things done on the fly",
   "type": "library",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "license": "MIT",
   "authors": [
     {
       "name": "velliz",
       "email": "diditvelliz@outlook.com",
-      "homepage": "http://velliz.github.io",
+      "homepage": "https://velliz.github.io",
       "role": "Lead Developer"
     }
   ],

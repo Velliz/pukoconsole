@@ -32,7 +32,7 @@ class Auth
     public function __construct($root, $value)
     {
         if ($value === null) {
-            die(Echos::Prints("class_name not specified! example: php puko setup auth UserAuth", true, 'light_red'));
+            die(Echos::Prints("class_name not specified! example: php puko setup auth UsersAuth", true, 'light_red'));
         }
 
         $this->value = $value;
