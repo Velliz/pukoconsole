@@ -2,6 +2,7 @@
 
 namespace plugins\auth;
 
+use Exception;
 use pukoframework\auth\Auth;
 use pukoframework\auth\PukoAuth;
 
@@ -24,9 +25,8 @@ class {{class}} implements Auth
     /**
      * @param $username
      * @param $password
-     * @return PukoAuth|bool
-     * This method should return instance of PukoAuth if login success.
-     * Return false if login failed.
+     * @return PukoAuth
+     * @desc This method should return instance of PukoAuth if login success. Return false if login failed.
      * @throws Exception
      */
     public function Login($username, $password)
@@ -37,7 +37,7 @@ class {{class}} implements Auth
 
     public function Logout()
     {
-        //todo: create or clear log in databases
+        return true;
     }
 
     public function GetLoginData($id, $permission)
