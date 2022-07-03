@@ -1,9 +1,13 @@
 $db['{{schema}}'] = [
     'dbType' => '{{type}}',
-    'host'   => '{{host}}',
-    'user'   => '{{user}}',
-    'pass'   => '{{pass}}',
+    'host' => '{{host}}',
+    'user' => '{{user}}',
+    'pass' => '{{pass}}',
     'dbName' => '{{dbname}}',
-    'port'   => '{{port}}',
+    'port' => '{{port}}',
     'driver' => '{{driver}}',
+    'ignoreTableWithPrefix' => '_',
+    'hideColumns' => [
+        'created', 'modified', 'cuid', 'muid', 'dflag', 'password'
+    ]
 ];

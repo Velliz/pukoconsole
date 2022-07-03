@@ -1,10 +1,10 @@
 <?php return [
-    'method'      => "AES-256-CBC",
-    'key'         => "{{key}}",
-    'identifier'  => "{{identifier}}",
-    'cookies'     => "{{cookies}}",
-    'session'     => "{{session}}",
-    'expired'     => "{{expired}}",
+    'method' => "AES-256-CBC",
+    'key' => "{{key}}",
+    'identifier' => "{{identifier}}",
+    'cookies' => "{{cookies}}",
+    'session' => "{{session}}",
+    'expired' => "{{expired}}",
     'expiredText' => "{{expiredText}}",
-    'errorText'   => "{{errorText}}",
+    'errorText' => "{{errorText}}",
 ];

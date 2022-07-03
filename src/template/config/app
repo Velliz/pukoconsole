@@ -5,7 +5,8 @@
     'cache' => [
         'kind' => 'MEMCACHED',
         'host' => 'localhost',
-        'port' => 11211
+        'port' => 11211,
+        'active' => false,
     ],
     'logs' => [
         'slack' => [
