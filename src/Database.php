@@ -76,7 +76,7 @@ class Database
             $ignored = $this->Read('Ignored Table Prefix (Default: _)');
             $hide = $this->Read('Hide Column (Default: created,modified,cuid,muid,dflag,password)');
 
-            $hide = explode('.', $hide);
+            $hide = explode(',', $hide);
             $hide_store = [];
             foreach ($hide as $key => $val) {
                 $val = trim($val);
@@ -189,67 +189,77 @@ class Database
                 $primary = "";
 
                 $fieldlist = [];
+                $fieldlist_filtered = [];
                 $data = [];
+
+                foreach ($column as $v) {
+                    if ($db === 'mysql') {
+                        $initValue = 'null';
+                        $fieldlist[] = strtolower($v['Field']);
+
+                        if ($v['Key'] === 'PRI') {
+                            $primary = $v['Field'];
+                        }
+
+                        if (strpos($v['Type'], 'char') !== false) {
+                            $initValue = "''";
+                        }
+                        if (strpos($v['Type'], 'text') !== false) {
+                            $initValue = "''";
+                        }
+                        if (strpos($v['Type'], 'int') !== false) {
+                            $initValue = 0;
+                        }
+                        if (strpos($v['Type'], 'double') !== false) {
+                            $initValue = 0;
+                        }
+
+                        $data[$v['Field']] = $initValue;
+
+                        $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                        $property = str_replace('{{field}}', $v['Field'], $property);
+                        $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
+                        $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
+                        $property = str_replace('{{value}}', $initValue, $property);
+                    }
+                    if ($db === 'sqlsrv') {
+                        $initValue = 'null';
+                        $fieldlist[] = strtolower($v['COLUMN_NAME']);
+
+                        if (strpos($v['TYPE_NAME'], 'identity') !== false) {
+                            $primary = $v['COLUMN_NAME'];
+                        }
+
+                        if (strpos($v['TYPE_NAME'], 'char') !== false) {
+                            $initValue = "''";
+                        }
+                        if (strpos($v['TYPE_NAME'], 'text') !== false) {
+                            $initValue = "''";
+                        }
+                        if (strpos($v['TYPE_NAME'], 'int') !== false) {
+                            $initValue = 0;
+                        }
+                        if (strpos($v['TYPE_NAME'], 'double') !== false) {
+                            $initValue = 0;
+                        }
+
+                        $data[$v['COLUMN_NAME']] = $initValue;
+
+                        $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                        $property = str_replace('{{field}}', $v['COLUMN_NAME'], $property);
+                        $nullable = ($v['IS_NULLABLE'] === 'YES') ? '' : 'not null';
+                        $property = str_replace('{{type}}', "{$v['TYPE_NAME']} $nullable", $property);
+                        $property = str_replace('{{value}}', $initValue, $property);
+                    }
+                }
 
                 foreach ($column as $v) {
                     if (!in_array($v['Field'], $hide)) {
                         if ($db === 'mysql') {
-                            $initValue = 'null';
-                            $fieldlist[] = strtolower($v['Field']);
-
-                            if ($v['Key'] === 'PRI') {
-                                $primary = $v['Field'];
-                            }
-
-                            if (strpos($v['Type'], 'char') !== false) {
-                                $initValue = "''";
-                            }
-                            if (strpos($v['Type'], 'text') !== false) {
-                                $initValue = "''";
-                            }
-                            if (strpos($v['Type'], 'int') !== false) {
-                                $initValue = 0;
-                            }
-                            if (strpos($v['Type'], 'double') !== false) {
-                                $initValue = 0;
-                            }
-
-                            $data[$v['Field']] = $initValue;
-
-                            $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
-                            $property = str_replace('{{field}}', $v['Field'], $property);
-                            $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
-                            $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
-                            $property = str_replace('{{value}}', $initValue, $property);
+                            $fieldlist_filtered[] = strtolower($v['Field']);
                         }
                         if ($db === 'sqlsrv') {
-                            $initValue = 'null';
-                            $fieldlist[] = strtolower($v['COLUMN_NAME']);
-
-                            if (strpos($v['TYPE_NAME'], 'identity') !== false) {
-                                $primary = $v['COLUMN_NAME'];
-                            }
-
-                            if (strpos($v['TYPE_NAME'], 'char') !== false) {
-                                $initValue = "''";
-                            }
-                            if (strpos($v['TYPE_NAME'], 'text') !== false) {
-                                $initValue = "''";
-                            }
-                            if (strpos($v['TYPE_NAME'], 'int') !== false) {
-                                $initValue = 0;
-                            }
-                            if (strpos($v['TYPE_NAME'], 'double') !== false) {
-                                $initValue = 0;
-                            }
-
-                            $data[$v['COLUMN_NAME']] = $initValue;
-
-                            $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
-                            $property = str_replace('{{field}}', $v['COLUMN_NAME'], $property);
-                            $nullable = ($v['IS_NULLABLE'] === 'YES') ? '' : 'not null';
-                            $property = str_replace('{{type}}', "{$v['TYPE_NAME']} $nullable", $property);
-                            $property = str_replace('{{value}}', $initValue, $property);
+                            $fieldlist_filtered[] = strtolower($v['COLUMN_NAME']);
                         }
                     }
                 }
@@ -305,6 +315,7 @@ class Database
                 }
                 //end region generate model test classes
 
+                //region model contracts
                 if ($db === 'sqlsrv') {
                     $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_sqlsrv");
                 } else {
@@ -316,8 +327,8 @@ class Database
                 $contracts_file = str_replace('{{primary-conditions}}', "$primary = @1", $contracts_file);
                 $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
 
-                $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist), $contracts_file);
-                $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist) . '"', $contracts_file);
+                $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist_filtered), $contracts_file);
+                $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist_filtered) . '"', $contracts_file);
 
                 if (!is_dir("{$root}/model/{$schema}")) {
                     mkdir("{$root}/model/{$schema}", 0777, true);
@@ -325,6 +336,7 @@ class Database
                 if (!file_exists("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php")) {
                     file_put_contents("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php", $contracts_file);
                 }
+                //end of region model contracts
             }
         }
     }
