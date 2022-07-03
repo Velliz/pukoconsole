@@ -328,7 +328,7 @@ class Database
                 $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
 
                 $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist_filtered), $contracts_file);
-                $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist_filtered) . '"', $contracts_file);
+                $contracts_file = str_replace('{{table-specs}}', '"' . implode('",' . PHP_EOL . '"', $fieldlist_filtered) . '"', $contracts_file);
 
                 if (!is_dir("{$root}/model/{$schema}")) {
                     mkdir("{$root}/model/{$schema}", 0777, true);
