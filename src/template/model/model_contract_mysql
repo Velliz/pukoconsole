@@ -19,16 +19,16 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     public static function GetData()
     {
         $sql = "SELECT {{column}}
-                FROM {{table}}
-                WHERE {{conditions}}";
+        FROM {{table}}
+        WHERE {{conditions}}";
         return DBI::Prepare($sql)->GetData();
     }
 
     public static function GetById($id)
     {
         $sql = "SELECT {{column}}
-                FROM {{table}}
-                WHERE {{conditions}} AND {{primary-conditions}}";
+        FROM {{table}}
+        WHERE {{conditions}} AND {{primary-conditions}}";
         return DBI::Prepare($sql)->FirstRow($id);
     }
 
@@ -74,8 +74,9 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     {
         $sql = "SELECT {{column}}
         FROM {{table}}
-        WHERE {{conditions}} ORDER BY {{primary}}
-        DESC LIMIT 1;";
+        WHERE {{conditions}}
+        ORDER BY {{primary}} DESC
+        LIMIT 1;";
         return DBI::Prepare($sql)->FirstRow();
     }
 
