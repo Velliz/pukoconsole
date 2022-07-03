@@ -54,7 +54,7 @@ class Console
         $this->root = $root;
         $this->args = $args;
         if (!file_exists(__DIR__ . "/config/init.php")) {
-            die(Echos::Prints('Console init file not found!', true, 'light_red'));
+            die($this->Prints('Console init file not found!', true, 'light_red'));
         }
         $this->config = (include __DIR__ . "/config/init.php");
     }
@@ -120,7 +120,7 @@ class Console
             case 'ui':
                 return new Ui($this->root, 'datatables');
             default:
-                return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
+                return $this->Prints("Setup exited with no process executed!", true, 'yellow');
         }
     }
 
@@ -144,7 +144,7 @@ class Console
             case 'db':
                 return new Database($this->root, 'refresh');
             default:
-                return Echos::Prints("Refresh exited with no process executed!", true, 'yellow');
+                return $this->Prints("Refresh exited with no process executed!", true, 'yellow');
         }
     }
 
@@ -179,7 +179,7 @@ class Console
                     $this->GetCommand(Console::EPHEMERAL)
                 );
             default:
-                return Echos::Prints("Setup exited with no process executed!", true, 'yellow');
+                return $this->Prints("Setup exited with no process executed!", true, 'yellow');
         }
     }
 
@@ -196,7 +196,7 @@ class Console
      */
     public function NotFound()
     {
-        return Echos::Prints("Command not found! Access help: 'php puko help'", true, 'light_red');
+        return $this->Prints("Command not found! Access help: 'php puko help'", true, 'light_red');
     }
 
     /**
@@ -213,7 +213,7 @@ class Console
      */
     public function __toString()
     {
-        return Echos::Prints("Puko Console {$this->config['version']}");
+        return $this->Prints("Puko Console {$this->config['version']}");
     }
 
 }

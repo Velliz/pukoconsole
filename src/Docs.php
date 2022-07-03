@@ -32,7 +32,7 @@ class Docs
      */
     public function __toString()
     {
-        return Echos::Prints('Command not supported!', true, 'yellow');
+        return $this->Prints('Command not supported!', true, 'yellow');
     }
 
 

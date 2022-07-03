@@ -14,7 +14,7 @@ trait Commons
      * @param string $indent
      * @return mixed|string
      */
-    function var_export54($var, $indent = "")
+    public function var_export54($var, $indent = "")
     {
         switch (gettype($var)) {
             case "string":
@@ -39,7 +39,7 @@ trait Commons
      * @param $url
      * @return bool|mixed|string
      */
-    function download($url)
+    public function download($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

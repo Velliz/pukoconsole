@@ -6,7 +6,6 @@ use Exception;
 use PDO;
 use pukoconsole\util\Commons;
 use pukoconsole\util\Echos;
-use pukoconsole\util\Input;
 
 /**
  * Class Ui
@@ -39,19 +38,19 @@ class Ui
     function __construct($root, $kinds)
     {
         if ($root === null) {
-            die(Echos::Prints('Base url required!', true, 'light_red'));
+            die($this->Prints('Base url required!', true, 'light_red'));
         }
         $this->root = $root;
 
-        echo Echos::Prints('Make sure you already have Backend API for handle crud process!', true, 'yellow');
+        echo $this->Prints('Make sure you already have Backend API for handle crud process!', true, 'yellow');
 
-        $this->schema = Input::Read('Database Schema (primary)');
+        $this->schema = $this->Read('Database Schema (primary)');
         if (strlen($this->schema) <= 0) {
             $this->schema = 'primary';
         }
-        $this->table = Input::Read('Table');
+        $this->table = $this->Read('Table');
         if (strlen($this->table) <= 0) {
-            die(Echos::Prints('Table required!', true, 'light_red'));
+            die($this->Prints('Table required!', true, 'light_red'));
         }
 
         $database = include("{$root}/config/database.php");
@@ -67,7 +66,7 @@ class Ui
                 $statement = $this->PDO->prepare("exec sp_columns " . $this->table);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $dbconn['dbType']), true, 'light_red'));
+                die($this->Prints(sprintf("Sorry, database '%s' not yet supported.", $dbconn['dbType']), true, 'light_red'));
         }
 
         $statement->execute();
@@ -79,7 +78,7 @@ class Ui
                 //routes exists check
                 $routes = include "{$root}/config/routes.php";
                 if (isset($routes['router']["{$this->schema}/{$this->table}"])) {
-                    die(Echos::Prints("Aborting! Routes '{$this->schema}/{$this->table}' already registered!", true, 'light_red'));
+                    die($this->Prints("Aborting! Routes '{$this->schema}/{$this->table}' already registered!", true, 'light_red'));
                 }
 
                 //get database column
@@ -196,7 +195,7 @@ class Ui
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect.", true, 'light_red'));
+            die($this->Prints("Failed to connect.", true, 'light_red'));
         }
     }
 
@@ -219,7 +218,7 @@ class Ui
             $dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect.", true, 'light_red'));
+            die($this->Prints("Failed to connect.", true, 'light_red'));
         }
     }
 
@@ -310,7 +309,7 @@ class Ui
      */
     public function __toString()
     {
-        return Echos::Prints('Generate UI setting completed', true, 'green');
+        return $this->Prints('Generate UI setting completed', true, 'green');
     }
 
 

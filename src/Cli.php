@@ -20,11 +20,11 @@ class Cli
     public function __construct($command = null)
     {
         if ($command === null) {
-            die(Echos::Prints("Missing required cli parameter!", true, 'light_red'));
+            die($this->Prints("Missing required cli parameter!", true, 'light_red'));
         }
 
-        echo Echos::Prints("puko framework project initialized at console", true, 'blue');
-        echo Echos::Prints("press (Ctrl + C) to stop");
+        echo $this->Prints("puko framework project initialized at console", true, 'blue');
+        echo $this->Prints("press (Ctrl + C) to stop");
         echo exec("php cli {$command}");
 
         return true;
@@ -35,7 +35,7 @@ class Cli
      */
     public function __toString()
     {
-        return Echos::Prints("Console is finished running!");
+        return $this->Prints("Console is finished running!");
     }
 
 }

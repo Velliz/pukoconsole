@@ -34,8 +34,8 @@ class Serve
             $port = 4000;
         }
         $this->port = $port;
-        echo Echos::Prints("Puko project initialized at localhost:{$port}", true, 'blue');
-        echo Echos::Prints("Press (Ctrl + C) to stop.");
+        echo $this->Prints("Puko project initialized at localhost:{$port}", true, 'blue');
+        echo $this->Prints("Press (Ctrl + C) to stop.");
         echo exec("php -S localhost:{$port} routes.php");
 
         return true;
@@ -43,7 +43,7 @@ class Serve
 
     public function __toString()
     {
-        return Echos::Prints("PHP server starred on port {$this->port}.", true, 'blue');
+        return $this->Prints("PHP server starred on port {$this->port}.", true, 'blue');
     }
 
 }

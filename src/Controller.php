@@ -43,7 +43,7 @@ class Controller
         $template = null;
 
         if ($value === null) {
-            die(Echos::Prints("Name not specified! example: php puko setup auth UserController", true, 'light_red'));
+            die($this->Prints("Name not specified! example: php puko setup auth UserController", true, 'light_red'));
         }
 
         $this->action = $action;
@@ -69,7 +69,7 @@ class Controller
      */
     public function __toString()
     {
-        return Echos::Prints("{$this->action} controller {$this->value} created!");
+        return $this->Prints("{$this->action} controller {$this->value} created!");
     }
 
 }

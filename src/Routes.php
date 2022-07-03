@@ -49,7 +49,7 @@ class Routes
     public function __construct($root, $directive, $action, $attribute)
     {
         if ($root === null) {
-            die(Echos::Prints('Base url required!', true, 'light_red'));
+            die($this->Prints('Base url required!', true, 'light_red'));
         }
         $this->root = $root;
 
@@ -93,7 +93,7 @@ class Routes
                 $this->crud($pages);
                 break;
             default:
-                die(Echos::Prints('Command not supported!', true, 'light_red'));
+                die($this->Prints('Command not supported!', true, 'light_red'));
                 break;
         }
     }
@@ -105,15 +105,15 @@ class Routes
     public function add($segment)
     {
         if (isset($segment[$this->attribute])) {
-            die(Echos::Prints("Routes already registered!", true, 'light_red'));
+            die($this->Prints("Routes already registered!", true, 'light_red'));
         }
 
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
-        $function = Input::Read('Function name');
+        $controller = $this->Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
+        $function = $this->Read('Function name');
         if ($this->directive === 'console' || $this->directive === 'socket') {
             $accept = 'get';
         } else {
-            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+            $accept = $this->Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
         }
 
         $data = [
@@ -154,7 +154,7 @@ class Routes
 
         $this->ProcessController($cNamespaces, $className, $function, $this->directive);
 
-        return Echos::Prints("Routes {$cNamespaces} {$function} added.", true, 'green');
+        return $this->Prints("Routes {$cNamespaces} {$function} added.", true, 'green');
     }
 
     /**
@@ -164,15 +164,15 @@ class Routes
     public function update($segment)
     {
         if (!isset($segment[$this->attribute])) {
-            die(Echos::Prints("Routes is not registered! Add them first.", true, 'light_red'));
+            die($this->Prints("Routes is not registered! Add them first.", true, 'light_red'));
         }
 
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
-        $function = Input::Read('Function name');
+        $controller = $this->Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
+        $function = $this->Read('Function name');
         if ($this->directive === 'console' || $this->directive === 'socket') {
             $accept = 'get';
         } else {
-            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+            $accept = $this->Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
         }
 
         $data = [
@@ -190,7 +190,7 @@ class Routes
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
-        return Echos::Prints("Routes {$function} modified.", true, 'green');
+        return $this->Prints("Routes {$function} modified.", true, 'green');
     }
 
     /**
@@ -199,16 +199,16 @@ class Routes
     public function lists($routes = array())
     {
         $count = count($routes);
-        echo Echos::Prints("Routes list found ({$count}) entries.", true, 'green');
+        echo $this->Prints("Routes list found ({$count}) entries.", true, 'green');
         foreach ($routes as $key => $value) {
             $accept = implode(",", $value["accept"]);
-            echo Echos::Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
+            echo $this->Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
         }
     }
 
     public function remove()
     {
-        die(Echos::Prints('To risky. Please delete them manually.', true, 'light_red'));
+        die($this->Prints('To risky. Please delete them manually.', true, 'light_red'));
     }
 
     /**
@@ -219,15 +219,15 @@ class Routes
     {
         //limit to service only?
         if ($this->directive !== 'service') {
-            die(Echos::Prints("Aborting! Only applicable to service", true, 'light_red'));
+            die($this->Prints("Aborting! Only applicable to service", true, 'light_red'));
         }
 
-        echo Echos::Prints("Make sure you already successful execute 'php puko setup db' before executing this command!", true, 'yellow');
+        echo $this->Prints("Make sure you already successful execute 'php puko setup db' before executing this command!", true, 'yellow');
 
         //check if entity is available on the database.
         $base = explode('/', $this->attribute);
         if (sizeof($base) !== 2) {
-            die(Echos::Prints("Aborting! incorrect parameter: schema/table", true, 'light_red'));
+            die($this->Prints("Aborting! incorrect parameter: schema/table", true, 'light_red'));
         }
         $schema = $base[0];
         $entity = $base[1];
@@ -272,7 +272,7 @@ class Routes
         //check if routes exist.
         foreach ($routes_new as $route => $val) {
             if (isset($segment[$route])) {
-                die(Echos::Prints("Aborting! Routes '{$route}' already registered!", true, 'light_red'));
+                die($this->Prints("Aborting! Routes '{$route}' already registered!", true, 'light_red'));
             }
         }
 
@@ -288,7 +288,7 @@ class Routes
         try {
             $object = new $model;
         } catch (\Error $ex) {
-            die(Echos::Prints("Aborting! Controller file required '{$model}.php' not found! maybe you entered wrong schema/table name?", true, 'light_red'));
+            die($this->Prints("Aborting! Controller file required '{$model}.php' not found! maybe you entered wrong schema/table name?", true, 'light_red'));
         }
 
         $pdc = new ReflectionClass($object);
@@ -344,7 +344,7 @@ class Routes
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
-        echo Echos::Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), true, 'green');
+        echo $this->Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), true, 'green');
     }
 
     public function ProcessController($namespace, $class, $function, $kind)
@@ -404,12 +404,12 @@ class Routes
      */
     public function errorOrLost($type)
     {
-        $controller = Input::Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
-        $function = Input::Read('Function name');
+        $controller = $this->Read('Controller (use \ to place in sub-directories) ex "entities\\reports"');
+        $function = $this->Read('Function name');
         if ($this->directive === 'console') {
             $accept = 'get';
         } else {
-            $accept = Input::Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
+            $accept = $this->Read('Accept? [GET,POST,PUT,PATCH,DELETE] multiple by commas');
         }
 
         $data = [
@@ -427,7 +427,7 @@ class Routes
 
     public function __toString()
     {
-        return Echos::Prints('Routes initialization complete.', true, 'green');
+        return $this->Prints('Routes initialization complete.', true, 'green');
     }
 
     public static function StringReplaceSlash($string)

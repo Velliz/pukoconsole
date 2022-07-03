@@ -47,32 +47,32 @@ class Database
     public function __construct($root, $kinds)
     {
         if ($root === null) {
-            die(Echos::Prints('Base url required!', true, 'light_red'));
+            die($this->Prints('Base url required!', true, 'light_red'));
         }
 
         $input = true;
         $configuration = array();
         while ($input) {
-            $db = Input::Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+            $db = $this->Read('Database Type (mysql, oracle, sqlsrv, mongo)');
             if (strlen($db) <= 0) {
                 $db = 'mysql';
             }
-            $host = Input::Read('Hostname (Default: localhost)');
+            $host = $this->Read('Hostname (Default: localhost)');
             if (strlen($host) <= 0) {
                 $host = 'localhost';
             }
-            $port = Input::Read('Port (Default: 3306)');
+            $port = $this->Read('Port (Default: 3306)');
             if (strlen($port) <= 0) {
                 $port = '3306';
             }
-            $schema = Input::Read('Schema Name (primary)');
+            $schema = $this->Read('Schema Name (primary)');
             if (strlen($schema) <= 0) {
                 $schema = 'primary';
             }
-            $dbName = Input::Read('Database Name');
-            $user = Input::Read('Username');
-            $pass = Input::Read('Password');
-            $driver = Input::Read('Driver');
+            $dbName = $this->Read('Database Name');
+            $user = $this->Read('Username');
+            $pass = $this->Read('Password');
+            $driver = $this->Read('Driver');
 
             $this->driver = $driver;
 
@@ -99,7 +99,7 @@ class Database
                 $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema);
             }
 
-            $more = Input::Read('Add another database connection schema? (y/n)');
+            $more = $this->Read('Add another database connection schema? (y/n)');
             if ($more !== 'y') {
                 $input = false;
             }
@@ -153,7 +153,7 @@ class Database
                 $this->SetupMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
+                die($this->Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
         }
 
         $statement = $this->PDO->prepare($this->query);
@@ -161,7 +161,7 @@ class Database
 
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $val) {
 
-            echo Echos::Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
+            echo $this->Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
 
             if ($db === 'mysql') {
                 $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
@@ -340,7 +340,7 @@ class Database
                 //$this->GenerateMongo($host, $port, $dbName, $user, $pass);
                 break;
             default:
-                die(Echos::Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
+                die($this->Prints(sprintf("Sorry, database '%s' not yet supported.", $db), true, 'light_red'));
         }
     }
 
@@ -371,7 +371,7 @@ class Database
             }
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect.", true, 'light_red'));
+            die($this->Prints("Failed to connect.", true, 'light_red'));
         }
 
     }
@@ -379,7 +379,7 @@ class Database
     public function SetupOracle($host, $port, $dbName, $user, $pass)
     {
         //todo: generate oracle support via PDO interface
-        die(Echos::Prints("Sorry, this option not yet supported."));
+        die($this->Prints("Sorry, this option not yet supported."));
     }
 
     public function SetupSqlServer($host, $port, $dbName, $user, $pass)
@@ -412,14 +412,14 @@ class Database
             }
             return $dbi;
         } catch (Exception $ex) {
-            die(Echos::Prints("Failed to connect.", true, 'light_red'));
+            die($this->Prints("Failed to connect.", true, 'light_red'));
         }
     }
 
     public function SetupMongo($host, $port, $dbName, $user, $pass)
     {
         //todo: generate mongo support via PDO interface
-        die(Echos::Prints("Sorry, this option not yet supported."));
+        die($this->Prints("Sorry, this option not yet supported."));
     }
 
     /**
@@ -435,7 +435,7 @@ class Database
     public function GenerateMySQL($root, $host, $port, $dbName, $user, $pass, $schema)
     {
         if (strlen($dbName) === 0) {
-            die(Echos::Prints('Database connection setup required.', true, 'light_red'));
+            die($this->Prints('Database connection setup required.', true, 'light_red'));
         }
         $this->PDO = $this->SetupMySQL($host, $port, '', $user, $pass);
 
@@ -480,7 +480,7 @@ class Database
                 }
                 $tablesql .= ")";
 
-                echo Echos::Prints(sprintf("Generating model %s.php", $positioning['Table']), false);
+                echo $this->Prints(sprintf("Generating model %s.php", $positioning['Table']), false);
 
                 $statement = $this->PDO->prepare($tablesql);
                 $statement->execute();
@@ -530,7 +530,7 @@ class Database
 
     public function __toString()
     {
-        return Echos::Prints('Database setting completed', true, 'green');
+        return $this->Prints('Database setting completed', true, 'green');
     }
 
 }

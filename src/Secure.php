@@ -16,15 +16,15 @@ class Secure
 
     public function __construct($root)
     {
-        echo Echos::Prints("AES-256 secure initialization ...", true, 'blue');
+        echo $this->Prints("AES-256 secure initialization ...", true, 'blue');
 
-        $identifier = Input::Read("Identifier");
-        $key = Input::Read("Secure key");
-        $cookies = Input::Read("Cookies name");
-        $session = Input::Read("Session name");
-        $expired = Input::Read("Session expired number (in days) or blank for infinity");
-        $expiredText = Input::Read("Session expired display text", false);
-        $error = Input::Read("Error display text", false);
+        $identifier = $this->Read("Identifier");
+        $key = $this->Read("Secure key");
+        $cookies = $this->Read("Cookies name");
+        $session = $this->Read("Session name");
+        $expired = $this->Read("Session expired number (in days) or blank for infinity");
+        $expiredText = $this->Read("Session expired display text", false);
+        $error = $this->Read("Error display text", false);
 
         $configuration = file_get_contents(__DIR__ . "/template/config/encryption");
 
@@ -41,7 +41,7 @@ class Secure
 
     public function __toString()
     {
-        return Echos::Prints("secure config created!", true, 'green');
+        return $this->Prints("secure config created!", true, 'green');
     }
 
 }

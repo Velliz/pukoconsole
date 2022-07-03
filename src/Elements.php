@@ -34,7 +34,7 @@ class Elements
         $this->type = $type;
 
         if ($type === '' || $type === null) {
-            die(Echos::Prints('Element name must defined!', true, 'light_red'));
+            die($this->Prints('Element name must defined!', true, 'light_red'));
         }
 
         if ($command === 'add') {
@@ -104,20 +104,20 @@ class Elements
 
         foreach ($data as $single) {
             if (!isset($single['download_url'])) {
-                die(Echos::Prints('Error when downloading elements.'));
+                die($this->Prints('Error when downloading elements.'));
             }
 
             $file = $this->download($single['download_url']);
             if (!file_exists("{$root}/plugins/elements/{$single['path']}")) {
                 file_put_contents("{$root}/plugins/elements/{$single['path']}", $file);
-                echo Echos::Prints("Downloading... {$single['name']}", false);
+                echo $this->Prints("Downloading... {$single['name']}", false);
             }
         }
     }
 
     public function __toString()
     {
-        return Echos::Prints("Element {$this->command} created.", true, 'green');
+        return $this->Prints("Element {$this->command} created.", true, 'green');
     }
 
 }

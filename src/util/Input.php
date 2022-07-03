@@ -14,7 +14,7 @@ trait Input
      * @param bool $trim
      * @return null|string|string[]
      */
-    public static function Read($variable, $trim = true)
+    public function Read($variable, $trim = true)
     {
         echo sprintf('%s :', $variable);
 

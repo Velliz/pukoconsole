@@ -13,7 +13,7 @@ use pukoconsole\util\Input;
 class Models
 {
 
-    use Commons, Echos;
+    use Commons, Echos, Input;
 
     private $name;
 
@@ -58,17 +58,17 @@ class Models
             case 'remove':
                 break;
             default:
-                die(Echos::Prints('Command not valid!', true, 'light_red'));
+                die($this->Prints('Command not valid!', true, 'light_red'));
         }
     }
 
     public function add($root, $model_name, $schema)
     {
         if (empty($model_name)) {
-            die(Echos::Prints('Model name required!', true, 'light_red'));
+            die($this->Prints('Model name required!', true, 'light_red'));
         }
         if (file_exists($root . "/plugins/model/{$schema}/{$this->name}.php")) {
-            die(Echos::Prints('Model already exists! Please update instead creating new one.', true, 'light_red'));
+            die($this->Prints('Model already exists! Please update instead creating new one.', true, 'light_red'));
         }
 
         $this->name = $model_name;
@@ -76,20 +76,20 @@ class Models
         $input = '';
         $data = array();
         while ($input !== 'no') {
-            $column = Input::Read("Type column name");
-            $type = Input::Read("Data type");
+            $column = $this->Read("Type column name");
+            $type = $this->Read("Data type");
             while (!in_array($type, $this->data_type)) {
-                $type = Input::Read("Data type");
+                $type = $this->Read("Data type");
             }
-            $length = Input::Read("Data type (length)");
+            $length = $this->Read("Data type (length)");
             $pk = $ai = $unsigned = '';
             if (in_array($type, array('int', 'integer', 'bigint'))) {
-                $unsigned = Input::Read("Unsigned? (yes/no)");
-                $pk = Input::Read("Primary key? (yes/no)");
-                $ai = Input::Read("Auto increment? (yes/no)");
+                $unsigned = $this->Read("Unsigned? (yes/no)");
+                $pk = $this->Read("Primary key? (yes/no)");
+                $ai = $this->Read("Auto increment? (yes/no)");
             }
-            $notnull = Input::Read("Null-able? (yes/no)");
-            $input = Input::Read("Add more column? (yes/no)");
+            $notnull = $this->Read("Null-able? (yes/no)");
+            $input = $this->Read("Add more column? (yes/no)");
             $data[] = array(
                 'Field' => $column,
                 'Type' => $type . (empty($length) ? "" : "({$length})"),
@@ -195,7 +195,7 @@ class Models
      */
     public function __toString()
     {
-        return Echos::Prints(
+        return $this->Prints(
             "plugins/model/{$this->schema}/{$this->name}.php 
                 | tests/unit/model/{$this->schema}/{$this->name}ModelTest.php 
                 | tests/unit/controller/{$this->schema}/{$this->name}ControllerTest.php 
