@@ -6,6 +6,7 @@ use Exception;
 use PDO;
 use pukoconsole\util\Commons;
 use pukoconsole\util\Echos;
+use pukoconsole\util\Input;
 
 /**
  * Class Ui
@@ -14,7 +15,7 @@ use pukoconsole\util\Echos;
 class Ui
 {
 
-    use Echos, Commons;
+    use Echos, Commons, Input;
 
     var $root = '';
 
