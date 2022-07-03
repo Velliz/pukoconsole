@@ -73,6 +73,17 @@ class Database
             $user = $this->Read('Username');
             $pass = $this->Read('Password');
             $driver = $this->Read('Driver');
+            $ignored = $this->Read('Ignored Table Prefix (Default: _)');
+            $hide = $this->Read('Hide Column (Default: created,modified,cuid,muid,dflag,password)');
+
+            $hide = explode('.', $hide);
+            $hide_store = [];
+            foreach ($hide as $key => $val) {
+                $val = trim($val);
+                $hide[$key] = $val;
+
+                $hide_store[] = "'{$val}'";
+            }
 
             $this->driver = $driver;
 
@@ -86,17 +97,19 @@ class Database
             $cf = str_replace('{{dbname}}', $dbName, $cf);
             $cf = str_replace('{{port}}', $port, $cf);
             $cf = str_replace('{{driver}}', $driver, $cf);
+            $cf = str_replace('{{ignored}}', $ignored, $cf);
+            $cf = str_replace('{{hide}}', implode(", ", $hide_store), $cf);
 
             $configuration[$schema] = $cf;
 
             if ($kinds === 'setup') {
-                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema);
+                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema, $ignored, $hide);
             }
             if ($kinds === 'refresh') {
-                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema);
+                $this->Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema, $ignored, $hide);
             }
             if ($kinds === 'generate') {
-                $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema);
+                $this->Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema, $ignored, $hide);
             }
 
             $more = $this->Read('Add another database connection schema? (y/n)');
@@ -137,7 +150,7 @@ class Database
      * @param $pass
      * @param $schema
      */
-    public function Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema)
+    public function Setup($root, $db, $host, $port, $dbName, $user, $pass, $schema, $ignored, $hide)
     {
         switch ($db) {
             case 'mysql':
@@ -160,155 +173,158 @@ class Database
         $statement->execute();
 
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $val) {
+            if (substr($val['TABLE_NAME'], 0, 1) !== $ignored) {
+                echo $this->Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
 
-            echo $this->Prints("Creating model {$val['TABLE_NAME']}.php on schema {$schema}", false);
-
-            if ($db === 'mysql') {
-                $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
-            }
-            if ($db === 'sqlsrv') {
-                $statement = $this->PDO->prepare("exec sp_columns " . $val['TABLE_NAME']);
-            }
-            $statement->execute();
-
-            $column = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $property = "";
-            $primary = "";
-
-            $fieldlist = [];
-            $data = [];
-
-            foreach ($column as $k => $v) {
                 if ($db === 'mysql') {
-                    $initValue = 'null';
-                    $fieldlist[] = strtolower($v['Field']);
-
-                    if ($v['Key'] === 'PRI') {
-                        $primary = $v['Field'];
-                    }
-
-                    if (strpos($v['Type'], 'char') !== false) {
-                        $initValue = "''";
-                    }
-                    if (strpos($v['Type'], 'text') !== false) {
-                        $initValue = "''";
-                    }
-                    if (strpos($v['Type'], 'int') !== false) {
-                        $initValue = 0;
-                    }
-                    if (strpos($v['Type'], 'double') !== false) {
-                        $initValue = 0;
-                    }
-
-                    $data[$v['Field']] = $initValue;
-
-                    $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
-                    $property = str_replace('{{field}}', $v['Field'], $property);
-                    $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
-                    $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
-                    $property = str_replace('{{value}}', $initValue, $property);
+                    $statement = $this->PDO->prepare("DESC " . $val['TABLE_NAME']);
                 }
                 if ($db === 'sqlsrv') {
-                    $initValue = 'null';
-                    $fieldlist[] = strtolower($v['COLUMN_NAME']);
-
-                    if (strpos($v['TYPE_NAME'], 'identity') !== false) {
-                        $primary = $v['COLUMN_NAME'];
-                    }
-
-                    if (strpos($v['TYPE_NAME'], 'char') !== false) {
-                        $initValue = "''";
-                    }
-                    if (strpos($v['TYPE_NAME'], 'text') !== false) {
-                        $initValue = "''";
-                    }
-                    if (strpos($v['TYPE_NAME'], 'int') !== false) {
-                        $initValue = 0;
-                    }
-                    if (strpos($v['TYPE_NAME'], 'double') !== false) {
-                        $initValue = 0;
-                    }
-
-                    $data[$v['COLUMN_NAME']] = $initValue;
-
-                    $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
-                    $property = str_replace('{{field}}', $v['COLUMN_NAME'], $property);
-                    $nullable = ($v['IS_NULLABLE'] === 'YES') ? '' : 'not null';
-                    $property = str_replace('{{type}}', "{$v['TYPE_NAME']} $nullable", $property);
-                    $property = str_replace('{{value}}', $initValue, $property);
+                    $statement = $this->PDO->prepare("exec sp_columns " . $val['TABLE_NAME']);
                 }
-            }
+                $statement->execute();
 
-            $model_file = file_get_contents(__DIR__ . "/template/model/model");
-            $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
-            $model_file = str_replace('{{dbtype}}', $db, $model_file);
-            $model_file = str_replace('{{primary}}', $primary, $model_file);
-            $model_file = str_replace('{{variables}}', $property, $model_file);
-            $model_file = str_replace('{{schema}}', $schema, $model_file);
+                $column = $statement->fetchAll(PDO::FETCH_ASSOC);
+                $property = "";
+                $primary = "";
 
-            if (!is_dir("{$root}/plugins/model/{$schema}")) {
-                mkdir("{$root}/plugins/model/{$schema}", 0777, true);
-            }
-            file_put_contents($root . "/plugins/model/{$schema}/{$val['TABLE_NAME']}.php", $model_file);
+                $fieldlist = [];
+                $data = [];
 
-            //region generate model test classes
-            $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
-            $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
+                foreach ($column as $v) {
+                    if (!in_array($v['Field'], $hide)) {
+                        if ($db === 'mysql') {
+                            $initValue = 'null';
+                            $fieldlist[] = strtolower($v['Field']);
 
-            if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
-                mkdir("{$root}/tests/unit/model/{$schema}", 0777, true);
-            }
-            if (!file_exists("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php")) {
-                file_put_contents("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php", $test_file);
-            }
+                            if ($v['Key'] === 'PRI') {
+                                $primary = $v['Field'];
+                            }
 
-            $keyval = "";
-            $pointer = sizeof($data);
-            foreach ($data as $field => $value) {
-                if ($pointer == sizeof($data)) {
-                    $keyval .= "'{$field}' => {$value},\n";
-                } elseif ($pointer < sizeof($data) && $pointer > 1) {
-                    $keyval .= "            '{$field}' => {$value},\n";
-                } elseif ($pointer == 1) {
-                    $keyval .= "            '{$field}' => {$value}";
+                            if (strpos($v['Type'], 'char') !== false) {
+                                $initValue = "''";
+                            }
+                            if (strpos($v['Type'], 'text') !== false) {
+                                $initValue = "''";
+                            }
+                            if (strpos($v['Type'], 'int') !== false) {
+                                $initValue = 0;
+                            }
+                            if (strpos($v['Type'], 'double') !== false) {
+                                $initValue = 0;
+                            }
+
+                            $data[$v['Field']] = $initValue;
+
+                            $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                            $property = str_replace('{{field}}', $v['Field'], $property);
+                            $nullable = ($v['Null'] === 'YES') ? '' : 'not null';
+                            $property = str_replace('{{type}}', "{$v['Type']} $nullable {$v['Extra']}", $property);
+                            $property = str_replace('{{value}}', $initValue, $property);
+                        }
+                        if ($db === 'sqlsrv') {
+                            $initValue = 'null';
+                            $fieldlist[] = strtolower($v['COLUMN_NAME']);
+
+                            if (strpos($v['TYPE_NAME'], 'identity') !== false) {
+                                $primary = $v['COLUMN_NAME'];
+                            }
+
+                            if (strpos($v['TYPE_NAME'], 'char') !== false) {
+                                $initValue = "''";
+                            }
+                            if (strpos($v['TYPE_NAME'], 'text') !== false) {
+                                $initValue = "''";
+                            }
+                            if (strpos($v['TYPE_NAME'], 'int') !== false) {
+                                $initValue = 0;
+                            }
+                            if (strpos($v['TYPE_NAME'], 'double') !== false) {
+                                $initValue = 0;
+                            }
+
+                            $data[$v['COLUMN_NAME']] = $initValue;
+
+                            $property .= file_get_contents(__DIR__ . "/template/model/model_vars");
+                            $property = str_replace('{{field}}', $v['COLUMN_NAME'], $property);
+                            $nullable = ($v['IS_NULLABLE'] === 'YES') ? '' : 'not null';
+                            $property = str_replace('{{type}}', "{$v['TYPE_NAME']} $nullable", $property);
+                            $property = str_replace('{{value}}', $initValue, $property);
+                        }
+                    }
                 }
-                $pointer--;
-            }
-            $destruct = "array(
-            {$keyval}
-            );";
 
-            $test_file = file_get_contents(__DIR__ . "/template/controller/controller_tests");
-            $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
-            $test_file = str_replace('{{data}}', $destruct, $test_file);
+                $model_file = file_get_contents(__DIR__ . "/template/model/model");
+                $model_file = str_replace('{{table}}', $val['TABLE_NAME'], $model_file);
+                $model_file = str_replace('{{dbtype}}', $db, $model_file);
+                $model_file = str_replace('{{primary}}', $primary, $model_file);
+                $model_file = str_replace('{{variables}}', $property, $model_file);
+                $model_file = str_replace('{{schema}}', $schema, $model_file);
 
-            if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
-                mkdir("{$root}/tests/unit/controller/{$schema}", 0777, true);
-            }
-            if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php")) {
-                file_put_contents("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
-            }
-            //end region generate model test classes
+                if (!is_dir("{$root}/plugins/model/{$schema}")) {
+                    mkdir("{$root}/plugins/model/{$schema}", 0777, true);
+                }
+                file_put_contents($root . "/plugins/model/{$schema}/{$val['TABLE_NAME']}.php", $model_file);
 
-            if ($db === 'sqlsrv') {
-                $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_sqlsrv");
-            } else {
-                $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_mysql");
-            }
-            $contracts_file = str_replace('{{table}}', $val['TABLE_NAME'], $contracts_file);
-            $contracts_file = str_replace('{{schema}}', $schema, $contracts_file);
-            $contracts_file = str_replace('{{primary}}', $primary, $contracts_file);
-            $contracts_file = str_replace('{{primary-conditions}}', "$primary = @1", $contracts_file);
-            $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
+                //region generate model test classes
+                $test_file = file_get_contents(__DIR__ . "/template/model/model_contract_tests");
+                $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
 
-            $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist), $contracts_file);
-            $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist) . '"', $contracts_file);
+                if (!is_dir("{$root}/tests/unit/model/{$schema}")) {
+                    mkdir("{$root}/tests/unit/model/{$schema}", 0777, true);
+                }
+                if (!file_exists("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php")) {
+                    file_put_contents("{$root}/tests/unit/model/{$schema}/{$val['TABLE_NAME']}ModelTest.php", $test_file);
+                }
 
-            if (!is_dir("{$root}/model/{$schema}")) {
-                mkdir("{$root}/model/{$schema}", 0777, true);
-            }
-            if (!file_exists("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php")) {
-                file_put_contents("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php", $contracts_file);
+                $keyval = "";
+                $pointer = sizeof($data);
+                foreach ($data as $field => $value) {
+                    if ($pointer == sizeof($data)) {
+                        $keyval .= "'{$field}' => {$value},\n";
+                    } elseif ($pointer < sizeof($data) && $pointer > 1) {
+                        $keyval .= "            '{$field}' => {$value},\n";
+                    } elseif ($pointer == 1) {
+                        $keyval .= "            '{$field}' => {$value}";
+                    }
+                    $pointer--;
+                }
+                $destruct = "array(
+                    {$keyval}
+                );";
+
+                $test_file = file_get_contents(__DIR__ . "/template/controller/controller_tests");
+                $test_file = str_replace('{{table}}', $val['TABLE_NAME'], $test_file);
+                $test_file = str_replace('{{data}}', $destruct, $test_file);
+
+                if (!is_dir("{$root}/tests/unit/controller/{$schema}")) {
+                    mkdir("{$root}/tests/unit/controller/{$schema}", 0777, true);
+                }
+                if (!file_exists("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php")) {
+                    file_put_contents("{$root}/tests/unit/controller/{$schema}/{$val['TABLE_NAME']}ControllerTest.php", $test_file);
+                }
+                //end region generate model test classes
+
+                if ($db === 'sqlsrv') {
+                    $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_sqlsrv");
+                } else {
+                    $contracts_file = file_get_contents(__DIR__ . "/template/model/model_contract_mysql");
+                }
+                $contracts_file = str_replace('{{table}}', $val['TABLE_NAME'], $contracts_file);
+                $contracts_file = str_replace('{{schema}}', $schema, $contracts_file);
+                $contracts_file = str_replace('{{primary}}', $primary, $contracts_file);
+                $contracts_file = str_replace('{{primary-conditions}}', "$primary = @1", $contracts_file);
+                $contracts_file = str_replace('{{conditions}}', "dflag = 0", $contracts_file);
+
+                $contracts_file = str_replace('{{column}}', implode(', ', $fieldlist), $contracts_file);
+                $contracts_file = str_replace('{{table-specs}}', '"' . implode('", "', $fieldlist) . '"', $contracts_file);
+
+                if (!is_dir("{$root}/model/{$schema}")) {
+                    mkdir("{$root}/model/{$schema}", 0777, true);
+                }
+                if (!file_exists("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php")) {
+                    file_put_contents("{$root}/model/{$schema}/{$val['TABLE_NAME']}Contracts.php", $contracts_file);
+                }
             }
         }
     }
@@ -324,7 +340,7 @@ class Database
      * @param $schema
      * @throws Exception
      */
-    public function Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema)
+    public function Generate($root, $db, $host, $port, $dbName, $user, $pass, $schema, $ignored, $hide)
     {
         switch ($db) {
             case 'mysql':
