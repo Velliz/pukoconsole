@@ -37,6 +37,7 @@ class Routes
      * @var array|mixed
      */
     var $routes = array();
+    var $database = array();
 
     /**
      * Routes constructor
@@ -64,6 +65,7 @@ class Routes
         $this->attribute = $attribute;
 
         $this->routes = include "{$root}/config/routes.php";
+        $this->database = include "{$root}/config/database.php";
 
         if (in_array($this->directive, array('view', 'service', 'console', 'socket'))) {
             $this->structure($this->routes['router']);
@@ -303,23 +305,26 @@ class Routes
             $attr = isset($column['value'][0]) ? $column['value'][0] : '';
 
             if ($col !== '' && $attr !== '') {
-                //validations
-                $validation_copy = $validations;
-                $validation_copy = str_replace('{{variable}}', $col, $validation_copy);
-                $validation_copy = str_replace('{{ucase_variable}}', strtoupper($col), $validation_copy);
-                $train_validation .= $validation_copy;
+                //exclude column
+                if (!in_array($col, $this->database[$schema]['hideColumns'])) {
+                    //validations
+                    $validation_copy = $validations;
+                    $validation_copy = str_replace('{{variable}}', $col, $validation_copy);
+                    $validation_copy = str_replace('{{ucase_variable}}', strtoupper($col), $validation_copy);
+                    $train_validation .= $validation_copy;
 
-                //vars
-                $vars_copy = $vars;
-                $vars_copy = str_replace('{{entity}}', $entity, $vars_copy);
-                $vars_copy = str_replace('{{variable}}', $col, $vars_copy);
-                $train_vars .= $vars_copy;
+                    //vars
+                    $vars_copy = $vars;
+                    $vars_copy = str_replace('{{entity}}', $entity, $vars_copy);
+                    $vars_copy = str_replace('{{variable}}', $col, $vars_copy);
+                    $train_vars .= $vars_copy;
 
-                //responses
-                $response_copy = $responses;
-                $response_copy = str_replace('{{entity}}', $entity, $response_copy);
-                $response_copy = str_replace('{{variable}}', $col, $response_copy);
-                $train_responses .= $response_copy;
+                    //responses
+                    $response_copy = $responses;
+                    $response_copy = str_replace('{{entity}}', $entity, $response_copy);
+                    $response_copy = str_replace('{{variable}}', $col, $response_copy);
+                    $train_responses .= $response_copy;
+                }
             }
         }
 
@@ -349,7 +354,8 @@ class Routes
             '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
         );
 
-        echo $this->Prints(sprintf("Generating CRUD controller\%s\%s.php done!", $schema, $entity), true, 'green');
+        echo $this->Prints(sprintf("Generating Service CRUD in controller\%s\%s.php done!", $schema, $entity), true, 'green');
+        echo $this->Prints(sprintf("Don't forget to rebuild the language: php puko language controller/%s", $schema), true, 'green');
     }
 
     public function ProcessController($namespace, $class, $function, $kind)
