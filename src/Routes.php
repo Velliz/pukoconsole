@@ -51,6 +51,9 @@ class Routes
         if ($root === null) {
             die($this->Prints('Base url required!', true, 'light_red'));
         }
+        if ($attribute === null) {
+            $attribute = "";
+        }
         $this->root = $root;
 
         $this->directive = $directive;
@@ -69,6 +72,9 @@ class Routes
         } else if ($this->directive === 'list') {
             $this->lists($this->routes['router']);
         } else {
+            if (!isset($this->routes[$this->directive])) {
+                die($this->Prints('Command not supported!', true, 'light_red'));
+            }
             $this->structure($this->routes[$this->directive]);
         }
     }
@@ -94,7 +100,6 @@ class Routes
                 break;
             default:
                 die($this->Prints('Command not supported!', true, 'light_red'));
-                break;
         }
     }
 
