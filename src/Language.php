@@ -32,6 +32,9 @@ class Language
 
         // Path to your textfiles
         $path = realpath($root . "/{$kinds}/");
+        if (!is_dir($path)) {
+            die($this->Prints('Invalid directory!', true, 'light_red'));
+        }
         $fileList = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path), \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($fileList as $item) {
@@ -53,7 +56,7 @@ class Language
                             $say_variables = sizeof($result_first_item) - 1;
 
                             $value_var = "";
-                            for ($i = 0; $i < $say_variables; $i ++) {
+                            for ($i = 0; $i < $say_variables; $i++) {
                                 $value_var .= " %s";
                             }
 
