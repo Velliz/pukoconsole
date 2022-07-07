@@ -38,8 +38,8 @@ serve    Start project on localhost with PHP build in server
          [port]
 
 element  Generate or download view element
-         <name> [add]
-         <name> [download]
+         [add] <element name>
+         [download] <element name> (*beta)
 
 tests    Start unit testing (beta)
 

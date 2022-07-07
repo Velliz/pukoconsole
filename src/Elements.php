@@ -27,7 +27,7 @@ class Elements
     var $command = '';
     var $config = array();
 
-    public function __construct($root, $config, $type, $command)
+    public function __construct($root, $config, $command, $type)
     {
         $this->config = $config;
         $this->command = $command;
@@ -38,6 +38,9 @@ class Elements
         }
 
         if ($command === 'add') {
+            $this->AddElements($root, $type);
+        }
+        if ($command === 'add-react-vite') {
             $this->AddElements($root, $type);
         }
         if ($command === "download") {
@@ -117,7 +120,7 @@ class Elements
 
     public function __toString()
     {
-        return $this->Prints("Element {$this->command} created.", true, 'green');
+        return $this->Prints("Element {$this->type} created.", true, 'green');
     }
 
 }
