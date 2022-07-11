@@ -70,11 +70,20 @@ class Database
                 $schema = 'primary';
             }
             $dbName = $this->Read('Database Name');
-            $user = $this->Read('Username');
+            $user = $this->Read('Username (Default: root)');
+            if (strlen($user) <= 0) {
+                $user = 'root';
+            }
             $pass = $this->Read('Password');
             $driver = $this->Read('Driver');
             $ignored = $this->Read('Ignored Table Prefix (Default: _)');
+            if (strlen($ignored) <= 0) {
+                $ignored = '-';
+            }
             $hide = $this->Read('Hide Column (Default: created,modified,cuid,muid,dflag,password)');
+            if (strlen($hide) <= 0) {
+                $hide = 'created,modified,cuid,muid,dflag,password';
+            }
 
             $hide = explode(',', $hide);
             $hide_store = [];
