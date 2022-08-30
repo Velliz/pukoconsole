@@ -63,7 +63,11 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     {
         $strings = "";
         foreach ($condition as $column => $values) {
-            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            if ($column === '*') {
+                $strings .= $values;
+            } else {
+                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            }
         }
         $sql = sprintf("SELECT COUNT(id) data FROM {{table}} WHERE {{conditions}} %s;", $strings);
         $data = DBI::Prepare($sql)->FirstRow();
@@ -83,7 +87,9 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     public static function SearchData($keyword = array())
     {
         $strings = "";
-        foreach ($keyword as $column => $values) {
+        if ($column === '*') {
+            $strings .= $values;
+        } else {
             $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
         }
         $sql = sprintf("SELECT {{column}}
@@ -99,7 +105,11 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
 
         $strings = "";
         foreach ($keyword as $column => $values) {
-            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            if ($column === '*') {
+                $strings .= $values;
+            } else {
+                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            }
         }
 
         $sql = sprintf("SELECT {{column}}
@@ -127,7 +137,11 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
 
         $strings = "";
         foreach ($condition as $column => $values) {
-            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            if ($column === '*') {
+                $strings .= $values;
+            } else {
+                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            }
         }
 
         $sql = sprintf("SELECT {{column}}
