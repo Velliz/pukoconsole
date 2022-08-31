@@ -87,10 +87,12 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
     public static function SearchData($keyword = array())
     {
         $strings = "";
-        if ($column === '*') {
-            $strings .= $values;
-        } else {
-            $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+        foreach ($keyword as $column => $values) {
+            if ($column === '*') {
+                $strings .= $values;
+            } else {
+                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+            }
         }
         $sql = sprintf("SELECT {{column}}
         FROM {{table}}
