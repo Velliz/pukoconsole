@@ -399,13 +399,27 @@ class Routes
     public function ProcessAssets($controller, $function)
     {
         $controller = Routes::StringReplaceSlash($controller);
-        foreach ($this->lang as $key => $val) {
+        foreach ($this->lang as $val) {
+            //html
             $ctrl = "{$this->root}/assets/html/{$val}/{$controller}";
             if (!is_dir($ctrl)) {
                 mkdir($ctrl, 0777, true);
             }
             $html = file_get_contents(__DIR__ . "/template/assets/html");
+
+            $html = str_replace("{{controller}}", $controller, $html);
+            $html = str_replace("{{function}}", $function, $html);
+
             $fname = "{$this->root}/assets/html/{$val}/{$controller}/{$function}.html";
+            file_put_contents($fname, $html);
+
+            //javascript
+            $ctrl = "{$this->root}/assets/scripts/{$controller}";
+            if (!is_dir($ctrl)) {
+                mkdir($ctrl, 0777, true);
+            }
+            $html = file_get_contents(__DIR__ . "/template/assets/scripts");
+            $fname = "{$this->root}/assets/scripts/{$controller}/{$function}.js";
             file_put_contents($fname, $html);
         }
     }

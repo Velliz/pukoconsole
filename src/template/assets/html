@@ -3,4 +3,7 @@
     <p>Blank pages is proof that your routes looks right.</p>
     <p>Happy designing :)</p>
 </div>
-{!js(<!-- place your custom JavaScript file here -->)}
+{!js(
+<script src="assets/scripts/{{controller}}/{{function}}.js"></script>
+<!-- place your custom JavaScript file here -->
+)}
