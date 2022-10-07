@@ -30,12 +30,21 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}();
 {{vars}}
 
-        ${{entity}}->save();
+        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+            //save or update here
+            ${{entity}}->save();
+
+            //don't forget to process another data related to this table schema
+
+            //don't forget to return true or false as commit flag for transaction.
+            return true;
+        });
 
         //response
         $data['{{entity}}'] = [
     {{responses}}
         ];
+        $data['transaction'] = $transaction;
 
         return $data;
     }
@@ -59,12 +68,21 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 {{vars}}
 
-        ${{entity}}->modify();
+        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+            //save or update here
+            ${{entity}}->modify();
+
+            //don't forget to process another data related to this table schema
+
+            //don't forget to return true or false as commit flag for transaction.
+            return true;
+        });
 
         //response
         $data['{{entity}}'] = [
     {{responses}}
         ];
+        $data['transaction'] = $transaction;
 
         return $data;
     }
@@ -78,10 +96,17 @@ class {{entity}} extends Service
     {
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 
-        //delete logic here
+        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+            //delete logic here
+
+            //don't forget to delete data related to this table schema
+
+            //don't forget to return true or false as commit flag for transaction.
+            return true;
+        });
 
         return [
-            'deleted' => true
+            'deleted' => $transaction
         ];
     }
 
