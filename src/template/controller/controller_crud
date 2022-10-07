@@ -30,7 +30,7 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}();
 {{vars}}
 
-        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
             //save or update here
             ${{entity}}->save();
 
@@ -68,7 +68,7 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 {{vars}}
 
-        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
             //save or update here
             ${{entity}}->modify();
 
@@ -96,7 +96,7 @@ class {{entity}} extends Service
     {
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 
-        $transaction = DBI::Transactional(function($dbi) use (${{entity}}) {
+        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
             //delete logic here
 
             //don't forget to delete data related to this table schema
