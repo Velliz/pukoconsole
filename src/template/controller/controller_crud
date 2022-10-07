@@ -32,7 +32,7 @@ class {{entity}} extends Service
 
         $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
             //save or update here
-            ${{entity}}->save();
+            ${{entity}}->save($dbi);
 
             //don't forget to process another data related to this table schema
 
@@ -70,7 +70,7 @@ class {{entity}} extends Service
 
         $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
             //save or update here
-            ${{entity}}->modify();
+            ${{entity}}->modify($dbi);
 
             //don't forget to process another data related to this table schema
 
