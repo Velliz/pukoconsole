@@ -22,6 +22,7 @@ class {{class}} extends Sockets
     public function __construct()
     {
         parent::__construct();
+        $this->SOCKET_PORT = 8090;
         $this->clients = new \SplObjectStorage;
     }
 
