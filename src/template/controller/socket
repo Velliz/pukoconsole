@@ -4,31 +4,49 @@ namespace {{namespace}};
 
 use pukoframework\middleware\Sockets;
 use Ratchet\ConnectionInterface;
+use SplObjectStorage;
 
 /**
  * #Template html false
+ * @desc run the websocket server with: php cli <route_params>
  */
 class {{class}} extends Sockets
 {
 
+    /**
+     * @var SplObjectStorage
+     * @desc simple storage object for example purposes
+     */
+    protected $clients;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->clients = new \SplObjectStorage;
+    }
+
     function onOpen(ConnectionInterface $conn)
     {
-        // TODO: Implement onOpen() method.
+        $this->clients->attach($conn);
     }
 
     function onClose(ConnectionInterface $conn)
     {
-        // TODO: Implement onClose() method.
+        $this->clients->detach($conn);
     }
 
     function onError(ConnectionInterface $conn, \Exception $e)
     {
-        // TODO: Implement onError() method.
+        $conn->close();
     }
 
     function onMessage(ConnectionInterface $from, $msg)
     {
-        // TODO: Implement onMessage() method.
+        foreach ($this->clients as $client) {
+            if ($from != $client) {
+                $client->send($msg);
+            }
+        }
     }
 
 }
