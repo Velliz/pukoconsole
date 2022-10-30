@@ -248,7 +248,7 @@ class Routes
         $routes_new["{$entity}/{?}/update"] = [
             "controller" => "{$schema}\\{$entity}",
             "function" => "update",
-            "accept" => ["PUT", "POST"]
+            "accept" => ["PUT"]
         ];
         $routes_new["{$entity}/{?}/delete"] = [
             "controller" => "{$schema}\\{$entity}",
@@ -258,7 +258,7 @@ class Routes
         $routes_new["{$entity}/explore"] = [
             "controller" => "{$schema}\\{$entity}",
             "function" => "explore",
-            "accept" => ["POST", "GET"]
+            "accept" => ["POST"]
         ];
         $routes_new["{$entity}/table"] = [
             "controller" => "{$schema}\\{$entity}",
