@@ -30,21 +30,12 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}();
 {{vars}}
 
-        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
-            //save or update here
-            ${{entity}}->save($dbi);
-
-            //don't forget to process another data related to this table schema
-
-            //don't forget to return true or false as commit flag for transaction.
-            return true;
-        });
+        ${{entity}}->save();
 
         //response
         $data['{{entity}}'] = [
     {{responses}}
         ];
-        $data['transaction'] = $transaction;
 
         return $data;
     }
@@ -68,21 +59,12 @@ class {{entity}} extends Service
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 {{vars}}
 
-        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
-            //save or update here
-            ${{entity}}->modify($dbi);
-
-            //don't forget to process another data related to this table schema
-
-            //don't forget to return true or false as commit flag for transaction.
-            return true;
-        });
+        ${{entity}}->modify();
 
         //response
         $data['{{entity}}'] = [
     {{responses}}
         ];
-        $data['transaction'] = $transaction;
 
         return $data;
     }
@@ -96,17 +78,10 @@ class {{entity}} extends Service
     {
         ${{entity}} = new \plugins\model\{{schema}}\{{entity}}($id);
 
-        $transaction = \pukoframework\pda\DBI::Transactional(function($dbi) use (${{entity}}) {
-            //delete logic here
-
-            //don't forget to delete data related to this table schema
-
-            //don't forget to return true or false as commit flag for transaction.
-            return true;
-        });
+        //delete logic here
 
         return [
-            'deleted' => $transaction
+            'deleted' => true
         ];
     }
 
