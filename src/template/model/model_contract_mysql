@@ -66,7 +66,7 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
             if ($column === '*') {
                 $strings .= $values;
             } else {
-                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+                $strings .= sprintf(" AND (%s = '%s') ", $column, str_replace("'", "\'", $values));
             }
         }
         $sql = sprintf("SELECT COUNT(id) data FROM {{table}} WHERE {{conditions}} %s;", $strings);
@@ -91,7 +91,7 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
             if ($column === '*') {
                 $strings .= $values;
             } else {
-                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+                $strings .= sprintf(" AND (%s = '%s') ", $column, str_replace("'", "\'", $values));
             }
         }
         $sql = sprintf("SELECT {{column}}
@@ -110,7 +110,7 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
             if ($column === '*') {
                 $strings .= $values;
             } else {
-                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+                $strings .= sprintf(" AND (%s = '%s') ", $column, str_replace("'", "\'", $values));
             }
         }
 
@@ -142,7 +142,7 @@ class {{table}}Contracts extends {{table}} implements ModelContracts
             if ($column === '*') {
                 $strings .= $values;
             } else {
-                $strings .= sprintf(" AND (%s = '%s') ", $column, $values);
+                $strings .= sprintf(" AND (%s = '%s') ", $column, str_replace("'", "\'", $values));
             }
         }
 
