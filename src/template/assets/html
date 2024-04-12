@@ -1,5 +1,5 @@
 {!css(<!-- place your custom CSS file here -->)}
-<div style="margin:10px;">
+<div class="mt-4">
     <p>Blank pages is proof that your routes looks right.</p>
     <p>Happy designing :)</p>
 </div>

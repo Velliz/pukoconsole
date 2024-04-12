@@ -1,5 +1,5 @@
 <?php
 return [
-    'version' => '0.1.6',
+    'version' => '0.3.4',
     'repo' => 'https://api.github.com/repos/Velliz/elements/contents',
 ];
