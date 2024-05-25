@@ -25,6 +25,7 @@ class Docs
     public function __construct($root, $command, $value)
     {
         //todo: automated creating docs
+
     }
 
     /**

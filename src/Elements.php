@@ -40,9 +40,6 @@ class Elements
         if ($command === 'add') {
             $this->AddElements($root, $type);
         }
-        if ($command === 'add-react-vite') {
-            $this->AddElements($root, $type);
-        }
         if ($command === "download") {
             $this->DownloadElements($root);
         }
