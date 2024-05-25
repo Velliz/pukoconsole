@@ -41,9 +41,13 @@ element  Generate or download view element
          [add] <element name>
          [download] <element name> (*beta)
 
-tests    Start unit testing (beta)
+migrate  Execute migration tool for database operations
+         [demo] (*alpha)
+         [run] <file name> (*alpha)
 
-cli      Execute PHP code directly without web servers a.k.a console mode
+tests    Start unit testing (*beta)
+
+cli      Execute PHP code directly without web servers a.k.a. console mode
          <router path>
          
 help     Show help menu
