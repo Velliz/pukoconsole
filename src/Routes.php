@@ -73,6 +73,10 @@ class Routes
             $this->errorOrLost($this->directive);
         } else if ($this->directive === 'list') {
             $this->lists($this->routes['router']);
+        } else if ($this->directive === 'dir') {
+            $this->directories($this->routes['router']);
+        } else if ($this->directive === 'resort') {
+            $this->resorts($this->routes['router']);
         } else {
             if (!isset($this->routes[$this->directive])) {
                 die($this->Prints('Command not supported!', true, 'light_red'));
@@ -211,6 +215,34 @@ class Routes
             $accept = implode(",", $value["accept"]);
             echo $this->Prints("{$key} => {$value["controller"]}@{$value["function"]} [{$accept}]", false);
         }
+    }
+
+    /**
+     * @param array $routes
+     */
+    public function directories($routes = array())
+    {
+        foreach ($routes as $key => $value) {
+            $accept = implode(",", $value["accept"]);
+            echo $this->Prints("{$key} [{$accept}]", false);
+        }
+    }
+
+    /**
+     * @param $routes
+     */
+    public function resorts($routes = array())
+    {
+        $count = count($routes);
+        echo $this->Prints("Re-sorting ({$count}) entries.", true, 'green');
+
+        //sort ascending the routes definitions
+        ksort($this->routes['router']);
+
+        file_put_contents(
+            "{$this->root}/config/routes.php",
+            '<?php $routes = ' . $this->var_export54($this->routes) . '; return $routes;'
+        );
     }
 
     public function remove()

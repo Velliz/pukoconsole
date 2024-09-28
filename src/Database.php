@@ -38,49 +38,66 @@ class Database
 
     var $driver = '';
 
+    var $database = array();
+
     /**
      * Database constructor.
      * @param $root
      * @param $kinds
+     * @param $selected_schema
      * @throws Exception
      */
-    public function __construct($root, $kinds)
+    public function __construct($root, $kinds, $selected_schema)
     {
         if ($root === null) {
             die($this->Prints('Base url required!', true, 'light_red'));
         }
 
+        $database = include "{$root}/config/database.php";
+        if (isset($database[$selected_schema])) {
+            $this->database = $database[$selected_schema];
+        }
+
         $input = true;
         $configuration = array();
         while ($input) {
-            $db = $this->Read('Database Type (mysql, oracle, sqlsrv, mongo)');
+            $db = $this->Read('Database Type (mysql, oracle, sqlsrv, mongo) (selected: ' . $this->database['dbType'] . '})');
             if (strlen($db) <= 0) {
-                $db = 'mysql';
+                $db = $this->database['dbType'];
             }
-            $host = $this->Read('Hostname (Default: localhost)');
+            $host = $this->Read('Hostname (selected: ' . $this->database['host'] . ')');
             if (strlen($host) <= 0) {
-                $host = 'localhost';
+                $host = $this->database['host'];
             }
-            $port = $this->Read('Port (Default: 3306)');
+            $port = $this->Read('Port (selected: ' . $this->database['port'] . ')');
             if (strlen($port) <= 0) {
-                $port = '3306';
+                $port = $this->database['port'];
             }
-            $schema = $this->Read('Schema Name (primary)');
+            $schema = $this->Read('Schema Name (selected: ' . $selected_schema . ')');
             if (strlen($schema) <= 0) {
-                $schema = 'primary';
+                $schema = $selected_schema;
             }
-            $dbName = $this->Read('Database Name');
-            $user = $this->Read('Username (Default: root)');
+            $dbName = $this->Read('Database Name (selected: ' . $this->database['dbName'] . ')');
+            if (strlen($dbName) <= 0) {
+                $dbName = $this->database['dbName'];
+            }
+            $user = $this->Read('Username (selected: ' . $this->database['user'] . ')');
             if (strlen($user) <= 0) {
-                $user = 'root';
+                $user = $this->database['user'];
             }
-            $pass = $this->Read('Password');
-            $driver = $this->Read('Driver');
-            $ignored = $this->Read('Ignored Table Prefix (Default: _)');
+            $pass = $this->Read('Password (selected: ******)');
+            if (strlen($pass) <= 0) {
+                $pass = $this->database['pass'];
+            }
+            $driver = $this->Read('Driver (selected: ' . $this->database['driver'] . ')');
+            if (strlen($driver) <= 0) {
+                $driver = $this->database['driver'];
+            }
+            $ignored = $this->Read('Ignored Table Prefix (selected: ' . $this->database['ignoreTableWithPrefix'] . ')');
             if (strlen($ignored) <= 0) {
-                $ignored = '-';
+                $ignored = '_';
             }
-            $hide = $this->Read('Hide Column (Default: created,modified,cuid,muid,dflag,password)');
+            $hide = $this->Read('Hide Column (Example: created,modified,cuid,muid,dflag,password)');
             if (strlen($hide) <= 0) {
                 $hide = 'created,modified,cuid,muid,dflag,password';
             }

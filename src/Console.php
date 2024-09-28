@@ -116,7 +116,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database($this->root, 'generate');
+                return new Database($this->root, 'generate', $this->GetCommand(Console::ACTION));
             case 'ui':
                 return new Ui($this->root, 'datatables');
             default:
@@ -142,7 +142,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database($this->root, 'refresh');
+                return new Database($this->root, 'refresh', $this->GetCommand(Console::ACTION));
             default:
                 return $this->Prints("Refresh exited with no process executed!", true, 'yellow');
         }
@@ -157,7 +157,7 @@ class Console
     {
         switch ($kind) {
             case 'db':
-                return new Database($this->root, 'setup');
+                return new Database($this->root, 'setup', $this->GetCommand(Console::ACTION));
             case 'secure':
                 return new Secure($this->root);
             case 'auth':

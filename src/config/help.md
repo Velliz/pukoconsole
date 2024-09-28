@@ -16,6 +16,8 @@ refresh  Reload and apply Database updates from external sources without change 
                   
 routes   Routing generation and auto create associated controller files
          [list]
+         [resort]
+         [dir]
          [error]
          [lost]
          [service] [add] [url]
