@@ -2,7 +2,7 @@
 -- Puko Framework Console --
 
 setup    Installation and First time project setup
-         [db]
+         [db] [schema]
          [secure]
          [auth] [name]
          [controller] [view] [name]
@@ -12,7 +12,7 @@ setup    Installation and First time project setup
          [model] [remove] [name] [schema]
 
 refresh  Reload and apply Database updates from external sources without change config file
-         [db]
+         [db] [schema]
                   
 routes   Routing generation and auto create associated controller files
          [list]

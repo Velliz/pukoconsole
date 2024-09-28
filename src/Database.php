@@ -61,7 +61,7 @@ class Database
         $input = true;
         $configuration = array();
         while ($input) {
-            $db = $this->Read('Database Type (mysql, oracle, sqlsrv, mongo) (selected: ' . $this->database['dbType'] . '})');
+            $db = $this->Read('Database Type (mysql, oracle, sqlsrv, mongo) (selected: ' . $this->database['dbType'] . ')');
             if (strlen($db) <= 0) {
                 $db = $this->database['dbType'];
             }
