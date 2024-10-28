@@ -239,6 +239,9 @@ class Database
                         if (strpos($v['Type'], 'double') !== false) {
                             $initValue = 0;
                         }
+                        if (strpos($v['Type'], 'decimal') !== false) {
+                            $initValue = 0.0;
+                        }
 
                         $data[$v['Field']] = $initValue;
 
